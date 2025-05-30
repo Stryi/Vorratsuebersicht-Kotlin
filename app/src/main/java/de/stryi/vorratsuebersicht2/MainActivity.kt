@@ -3,7 +3,6 @@ package de.stryi.vorratsuebersicht2
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.findNavController
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -20,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         button = findViewById(R.id.MainButton_Kategorie)
         button.setOnClickListener {
 
-            val fragment = FirstFragment()
         }
     }
 }
