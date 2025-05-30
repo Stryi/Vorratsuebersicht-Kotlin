@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:id="@+id/Main_LinearLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:paddingStart="5dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="5dp" >
+
+        <TextView
+            android:id="@+id/Main_Text"
+            android:tag="ExpiryDateOnly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="20sp"
+            android:layout_marginStart="10dp"
+            android:text="Demnächst zu verbrauchen:" />
+
+        <TextView
+            android:id="@+id/Main_Text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:tag="ExpiryDateOnly"
+            android:text="17 Artikal nach dem Ablaufdatum"
+            android:textColor="#FD0000"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/Main_Text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:tag="ExpiryDateOnly"
+            android:text="2 Artikal demnächst verbrauchen"
+            android:textColor="#1025F4"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/Main_TextInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:tag="ExpiryDateOnly"
+            android:text="Neue App Version"
+            android:textSize="20sp" />
+
+
+        <Button
+            android:id="@+id/MainButton_Kategorie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Bestand nach Kategorie"
+            android:textAlignment="viewStart" />
+
+        <Button
+            android:id="@+id/MainButton_Lagerbestand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Lagerbestand"
+            android:textAlignment="textStart" />
+
+        <Button
+            android:id="@+id/MainButton_Artikeldaten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Artikeldaten"
+            android:textAlignment="textStart" />
+
+        <Button
+            android:id="@+id/MainButton_Barcode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Artikel scannen"
+            android:textAlignment="textStart" />
+
+        <Button
+            android:id="@+id/MainButton_ShoppingList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Einkaufsliste"
+            android:textAlignment="textStart" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
