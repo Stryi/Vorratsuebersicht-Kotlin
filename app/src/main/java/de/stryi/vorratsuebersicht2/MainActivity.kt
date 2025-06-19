@@ -9,7 +9,7 @@ import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var button: Button
+    private lateinit var buttonArtikel: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,8 +17,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        button = findViewById(R.id.MainButton_Artikeldaten)
-        button.setOnClickListener {
+        buttonArtikel = findViewById(R.id.MainButton_Artikeldaten)
+        buttonArtikel.setOnClickListener {
             val intent = Intent(this, ArticleListActivity::class.java)
             startActivity(intent)
         }
