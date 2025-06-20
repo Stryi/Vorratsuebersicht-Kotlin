@@ -1,28 +1,29 @@
 package de.stryi.vorratsuebersicht2
 
 import android.os.Bundle
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import de.stryi.vorratsuebersicht2.databinding.ActivityArticleListBinding
 
 class ArticleListActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityArticleListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityArticleListBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_article_list)
 
-        setSupportActionBar(findViewById(R.id.toolbar))
-        binding.toolbarLayout.title = title
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
-        }
+        val listView = findViewById<ListView>(R.id.test)
+        val data = listOf(
+            "Appell", "Banana", "Orange", "Kiwi",
+            "Mango", "Pineapple", "Strawberry", "Blueberry", "Raspberry",
+            "Blackberry", "Grapes", "Watermelon", "Cantaloupe", "Honeydew",
+            "Peach", "Plum", "Apricot", "Cherry", "Lemon", "Lime",
+            "Grapefruit", "Papaya", "Guava", "Passion fruit", "Pomegranate",
+            "Fig", "Date", "Coconut", "Lychee", "Dragon fruit",
+            "Starfruit", "Tangerine", "Nectarine", "Cranberry"
+        )
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, data)
+        listView.adapter = adapter
+
     }
 }
