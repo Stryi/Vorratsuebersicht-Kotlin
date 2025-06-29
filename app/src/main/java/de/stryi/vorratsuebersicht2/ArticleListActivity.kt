@@ -14,22 +14,13 @@ class ArticleListActivity : AppCompatActivity() {
 
         val data = mutableListOf<String>()
 
-        var articles =  Database.GetArticleList(this)
+        val articles =  Database.getArticleList()
         for (article in articles) {
             data.add(article)
         }
 
-        /*
-        val dbHelper = MyDatabaseHelper(this)
-        val alleNamen = dbHelper.getAlleBenutzer()
-        alleNamen.forEach {
-            data.add(it)
-        }
-        */
-
         val listView = findViewById<ListView>(R.id.test)
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, data)
         listView.adapter = adapter
-
     }
 }

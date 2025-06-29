@@ -1,6 +1,5 @@
 package de.stryi.vorratsuebersicht2
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -18,7 +17,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Android_Database.RestoreDatabasesFromResourcesOnStartup(this)
+        AndroidDatabase.restoreDatabasesFromResourcesOnStartup(this)
+
+        Database.init(this, AndroidDatabase.SQLITE_FILENAME_DEMO)
 
         buttonArtikel = findViewById(R.id.MainButton_Artikeldaten)
         buttonArtikel.setOnClickListener {
