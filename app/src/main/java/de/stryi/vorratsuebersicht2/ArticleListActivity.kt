@@ -1,5 +1,6 @@
 package de.stryi.vorratsuebersicht2
 
+import MyDatabaseHelper
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -12,16 +13,15 @@ class ArticleListActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_article_list)
 
+        val data = mutableListOf<String>()
+
+        val dbHelper = MyDatabaseHelper(this)
+        val alleNamen = dbHelper.getAlleBenutzer()
+        alleNamen.forEach {
+            data.add(it)
+        }
+
         val listView = findViewById<ListView>(R.id.test)
-        val data = listOf(
-            "Appell", "Banana", "Orange", "Kiwi",
-            "Mango", "Pineapple", "Strawberry", "Blueberry", "Raspberry",
-            "Blackberry", "Grapes", "Watermelon", "Cantaloupe", "Honeydew",
-            "Peach", "Plum", "Apricot", "Cherry", "Lemon", "Lime",
-            "Grapefruit", "Papaya", "Guava", "Passion fruit", "Pomegranate",
-            "Fig", "Date", "Coconut", "Lychee", "Dragon fruit",
-            "Starfruit", "Tangerine", "Nectarine", "Cranberry"
-        )
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, data)
         listView.adapter = adapter
 
