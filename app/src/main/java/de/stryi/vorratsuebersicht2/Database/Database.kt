@@ -4,39 +4,27 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 import android.database.Cursor
 
-class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(
-    context, "Vorraete_Demo.db3", null, 1
-) {
-    override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL("""
-            CREATE TABLE benutzer (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL
-            )
-        """.trimIndent())
-    }
+class MyDatabase(context: Context) : SQLiteOpenHelper(
+    context, "Vorraete_Demo.db3", null, 1)
+{
+    override fun onCreate(p0: SQLiteDatabase?) {  }
+    override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {  }
+}
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS benutzer")
-        onCreate(db)
-    }
+object Database
+{
+    fun GetArticleList(context: Context): List<String> {
 
-    fun insertBenutzer(name: String) {
-        val values = ContentValues().apply {
-            put("name", name)
-        }
-        writableDatabase.insert("benutzer", null, values)
-    }
+        val databaseConnection = MyDatabase(context)
 
-    fun getAlleBenutzer(): List<String> {
-        val benutzer = mutableListOf<String>()
-        val cursor: Cursor = readableDatabase.rawQuery("SELECT name FROM article", null)
+        val result = mutableListOf<String>()
+        val cursor: Cursor = databaseConnection.readableDatabase.rawQuery("SELECT name FROM article", null)
         with(cursor) {
             while (moveToNext()) {
-                benutzer.add(getString(0))
+                result.add(getString(0))
             }
             close()
         }
-        return benutzer
+        return result
     }
 }

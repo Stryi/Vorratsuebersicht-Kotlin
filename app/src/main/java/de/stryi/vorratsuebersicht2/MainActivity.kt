@@ -15,12 +15,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        this.copyDatabaseIfNeeded(this )
+        Android_Database.RestoreDatabasesFromResourcesOnStartup(this)
 
         buttonArtikel = findViewById(R.id.MainButton_Artikeldaten)
         buttonArtikel.setOnClickListener {
@@ -29,21 +27,4 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-    fun copyDatabaseIfNeeded(context: Context) {
-        val dbName = "Vorraete_Demo.db3"
-        val dbPath = context.getDatabasePath(dbName)
-
-        if (dbPath.exists())
-            return;
-
-        dbPath.parentFile?.mkdirs()
-
-        context.assets.open(dbName).use { inputStream ->
-            dbPath.outputStream().use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-            }
-    }
-
 }
