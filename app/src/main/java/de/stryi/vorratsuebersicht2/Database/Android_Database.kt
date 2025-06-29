@@ -1,6 +1,15 @@
 package de.stryi.vorratsuebersicht2
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+
+class MyDatabaseAccess(context: Context, databaseName: String) : SQLiteOpenHelper(
+    context, databaseName, null, 1)
+{
+    override fun onCreate(p0: SQLiteDatabase?) {  }
+    override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {  }
+}
 
 object Android_Database {
 
@@ -8,6 +17,11 @@ object Android_Database {
     const val SQLITE_FILENAME_NEW  = "Vorraete_db0.db3"
     const val SQLITE_FILENAME_DEMO = "Vorraete_Demo.db3"
     const val SQLITE_FILENAME_TEST = "Vorraete_Test.db3"
+
+    fun GetConnection(context: Context): MyDatabaseAccess
+    {
+        return MyDatabaseAccess(context, SQLITE_FILENAME_DEMO)
+    }
 
     /// <summary>
     /// Datenbanken aus den Resourcen erstellen.
