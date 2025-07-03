@@ -31,16 +31,18 @@ class MainActivity : AppCompatActivity() {
         buttonEanCodeScan = findViewById(R.id.MainButton_Barcode)
         buttonEanCodeScan.setOnClickListener {
 
-            val eanScanFragment = EanCodeScan.newInstance("Test1", "Test2")
 
-            // 2. FragmentTransaction starten, um das Fragment anzuzeigen
+            val eanScanFragment = EanCodeScan.newInstance("TEST", "Test2")
+
+            // Fragment modal anzeigen
+            eanScanFragment.show(supportFragmentManager, "EanCodeScan")
+
+            /*
             supportFragmentManager.beginTransaction()
-                .replace(R.id.FragmentLayout, eanScanFragment) // WICHTIG: Ersetzen Sie R.id.fragment_container
-                // mit der tatsächlichen ID des FrameLayouts
-                // in Ihrem activity_main.xml, das als
-                // Container für Fragmente dienen soll.
-                .addToBackStack(null) // Optional: Ermöglicht das Zurücknavigieren zum vorherigen Zustand
+                .replace(R.id.FragmentLayout, eanScanFragment)
+                .addToBackStack(null)
                 .commit()
+             */
         }
 
 

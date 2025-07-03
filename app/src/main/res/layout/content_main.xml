@@ -15,8 +15,6 @@
         android:paddingTop="5dp"
         android:paddingEnd="5dp" >
 
-        <include layout="@layout/fragment_ean_code_scan" />
-
         <TextView
             android:id="@+id/Main_Text"
             android:tag="ExpiryDateOnly"

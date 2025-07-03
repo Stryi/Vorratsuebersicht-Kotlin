@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 
 //import androidx.compose.ui.semantics.text
 
@@ -19,7 +20,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [EanCodeScan.newInstance] factory method to
  * create an instance of this fragment.
  */
-class EanCodeScan : Fragment() {
+class EanCodeScan : DialogFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -45,7 +46,7 @@ class EanCodeScan : Fragment() {
 
         // Hier greifen Sie auf die Views zu, NACHDEM die View erstellt wurde
         val text = view.findViewById<TextView>(R.id.FragmentText)
-        text.text = "TEST";
+        text.text = param1;
     }
 
     companion object {
