@@ -17,7 +17,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:text="EAN und QR Code Scan"/>
 
         <Button
             android:id="@+id/button"
