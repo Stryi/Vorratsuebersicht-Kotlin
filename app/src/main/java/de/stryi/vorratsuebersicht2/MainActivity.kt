@@ -31,12 +31,18 @@ class MainActivity : AppCompatActivity() {
         buttonEanCodeScan = findViewById(R.id.MainButton_Barcode)
         buttonEanCodeScan.setOnClickListener {
 
-            val text = "EAN und QR-Code Scan"
-            val eanScanFragment = EanCodeScan.newInstance(text, "TEST")
+
+            val eanScanFragment = EanCodeScan.newInstance("TEST", "Test2")
 
             // Fragment modal anzeigen
             eanScanFragment.show(supportFragmentManager, "EanCodeScan")
 
+            /*
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.FragmentLayout, eanScanFragment)
+                .addToBackStack(null)
+                .commit()
+             */
         }
 
 
