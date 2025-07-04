@@ -5,16 +5,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
-import androidx.core.app.ActivityCompat
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    val CAMERA_REQUEST_CODE = 101 // Definiere einen Request-Code
+
     private lateinit var binding: ActivityMainBinding
-    private lateinit var buttonArtikel: Button
-    private lateinit var buttonEanCodeScan: Button
-    private val CAMERA_PERMISSION_REQUEST_CODE = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,42 +21,44 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         AndroidDatabase.restoreDatabasesFromResourcesOnStartup(this)
 
         Database.init(this, AndroidDatabase.SQLITE_FILENAME_DEMO)
 
-        buttonArtikel = findViewById(R.id.MainButton_Artikeldaten)
-        buttonArtikel.setOnClickListener {
+        val buttonArticle = findViewById<Button>(R.id.MainButton_Artikeldaten)
+        buttonArticle.setOnClickListener {
             val intent = Intent(this, ArticleListActivity::class.java)
             startActivity(intent)
         }
 
-        buttonEanCodeScan = findViewById(R.id.MainButton_Barcode)
-        buttonEanCodeScan.setOnClickListener {
-            requestCameraPermission()
-        }
-
-
-    }
-
-    private fun requestCameraPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
-        } else {
-            // Permission has already been granted
-            openEanCodeScanner()
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                // Permission was granted
+        // Barcode scannen
+        val buttonBarcode = findViewById<Button>(R.id.MainButton_Barcode)
+        buttonBarcode.setOnClickListener {
+            PermissionHelper().requestPermission(
+                this,
+                Manifest.permission.CAMERA,
+                CAMERA_REQUEST_CODE)
+            {
                 openEanCodeScanner()
-            } else {
-                // Permission denied. Handle the case appropriately.
+            }
+        }
+
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String?>,
+        grantResults: IntArray)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == CAMERA_REQUEST_CODE){
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                openEanCodeScanner()
+            }
+            else {
+                Toast.makeText(this, "Kamera-Berechtigung nicht erteilt.", Toast.LENGTH_SHORT).show()
             }
         }
     }
