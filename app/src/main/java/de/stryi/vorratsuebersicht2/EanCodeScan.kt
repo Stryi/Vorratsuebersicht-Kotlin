@@ -30,7 +30,7 @@ class EanCodeScan : DialogFragment() {
 
         val button = view.findViewById<Button>(R.id.EanScanButton)
         button.setOnClickListener {
-            onResult?.invoke("TEST")
+            onResult?.invoke("4316268474382")
             dismiss()
         }
     }

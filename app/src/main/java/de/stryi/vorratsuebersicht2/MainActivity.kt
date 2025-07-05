@@ -8,9 +8,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -76,6 +78,13 @@ class MainActivity : AppCompatActivity() {
 
     fun searchEANCode(eanCode: String)
     {
+        val result = Database.getArticlesByEanCode(eanCode);
+        if (result.size === 0)
+        {
+            // Neuanlage Artikel
+            return
+        }
+
         val options = arrayOf("Lagerbestand", "Artikeldaten", "Einkaufszettel")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Aktion wählen...")
