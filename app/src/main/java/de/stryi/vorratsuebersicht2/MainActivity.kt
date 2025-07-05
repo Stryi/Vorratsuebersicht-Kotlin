@@ -1,17 +1,20 @@
 package de.stryi.vorratsuebersicht2
 
+import Database
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    val CAMERA_REQUEST_CODE = 101 // Definiere einen Request-Code
+    val cameraRequestCode = 101
 
     private lateinit var binding: ActivityMainBinding
 
@@ -37,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             PermissionHelper().requestPermission(
                 this,
                 Manifest.permission.CAMERA,
-                CAMERA_REQUEST_CODE)
+                cameraRequestCode)
             {
                 openEanCodeScanner()
             }
@@ -51,7 +54,7 @@ class MainActivity : AppCompatActivity() {
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode == CAMERA_REQUEST_CODE){
+        if (requestCode == cameraRequestCode){
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 openEanCodeScanner()
             }
@@ -65,7 +68,25 @@ class MainActivity : AppCompatActivity() {
         val eanScanFragment = EanCodeScan()
         eanScanFragment.onResult = { eanCode ->
             Toast.makeText(this, eanCode, Toast.LENGTH_SHORT).show()
+
+            searchEANCode(eanCode)
         }
         eanScanFragment.show(supportFragmentManager, "EanCodeScan")
+    }
+
+    fun searchEANCode(eanCode: String)
+    {
+        val options = arrayOf("Lagerbestand", "Artikeldaten", "Einkaufszettel")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Aktion wählen...")
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> Log.d("Dialog", "Lagerbestand gewählt")
+                1 -> Log.d("Dialog", "Artikeldaten gewählt")
+                2 -> Log.d("Dialog", "Einkaufszettel gewählt")
+            }
+        }
+        builder.show()
+
     }
 }
