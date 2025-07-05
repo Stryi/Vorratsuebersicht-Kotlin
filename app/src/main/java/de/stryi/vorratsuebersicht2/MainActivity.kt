@@ -42,8 +42,6 @@ class MainActivity : AppCompatActivity() {
                 openEanCodeScanner()
             }
         }
-
-
     }
 
     override fun onRequestPermissionsResult(
@@ -64,7 +62,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openEanCodeScanner() {
-        val eanScanFragment = EanCodeScan.newInstance("EAN und QR-Code Scan", "TEST")
+        val eanScanFragment = EanCodeScan()
+        eanScanFragment.onResult = { eanCode ->
+            Toast.makeText(this, eanCode, Toast.LENGTH_SHORT).show()
+        }
         eanScanFragment.show(supportFragmentManager, "EanCodeScan")
     }
 }
