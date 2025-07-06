@@ -2,15 +2,17 @@ package de.stryi.vorratsuebersicht2
 
 import Database
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.google.zxing.integration.android.IntentIntegrator
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
 
@@ -76,10 +78,23 @@ class MainActivity : AppCompatActivity() {
         eanScanFragment.show(supportFragmentManager, "EanCodeScan")
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1004 && resultCode == Activity.RESULT_OK) {
+            val result = IntentIntegrator.parseActivityResult(resultCode, data)
+            val code = result?.contents
+            if (code != null) {
+                Log.d("SCAN", "Ergebnis: $code")
+            }
+        }
+    }
+
     fun searchEANCode(eanCode: String)
     {
-        val result = Database.getArticlesByEanCode(eanCode);
-        if (result.size === 0)
+        val result = Database.getArticlesByEanCode(eanCode)
+        if (result.isEmpty())
         {
             // Neuanlage Artikel
             return
