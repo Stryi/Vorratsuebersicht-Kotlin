@@ -26,12 +26,42 @@
             android:layout_height="300dp"
             android:layout_margin="5dp" />
 
-        <Button
-            android:id="@+id/EanScanButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:text="Button" />
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonZxingFlashOnOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#22AAAAAA"
+                android:visibility="visible"
+                android:drawableTop="@drawable/flashlight_on_40px"
+                android:textColor="@color/black"
+                android:text="an/aus" />
+
+            <Button
+                android:id="@+id/buttonZxingCameraSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#22AAAAAA"
+                android:drawableTop="@drawable/cameraswitch_40px"
+                android:textColor="@color/black"
+                android:text="drehen" />
+
+            <Button
+                android:id="@+id/buttonZxingTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#22AAAAAA"
+                android:drawableTop="@drawable/barcode_40px"
+                android:textColor="@color/black"
+                android:text="Test" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

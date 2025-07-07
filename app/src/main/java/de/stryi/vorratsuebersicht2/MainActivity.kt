@@ -4,6 +4,7 @@ import Database
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -11,8 +12,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.google.zxing.integration.android.IntentIntegrator
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
 
@@ -25,12 +24,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         AndroidDatabase.restoreDatabasesFromResourcesOnStartup(this)
 
-        Database.init(this, AndroidDatabase.SQLITE_FILENAME_DEMO)
+        Database.init(this, AndroidDatabase.SQLITE_FILENAME_PROD)
 
         val buttonArticle = findViewById<Button>(R.id.MainButton_Artikeldaten)
         buttonArticle.setOnClickListener {

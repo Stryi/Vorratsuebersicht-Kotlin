@@ -15,7 +15,7 @@ object AndroidDatabase {
     fun restoreDatabasesFromResourcesOnStartup(context: Context)
     {
         // Localized demo database with sample data.
-        createLocalizedDatabaseFromAsset(context, SQLITE_FILENAME_DEMO)
+        createLocalizedDatabaseFromAsset(context, SQLITE_FILENAME_PROD)
     }
 
     /// <summary>

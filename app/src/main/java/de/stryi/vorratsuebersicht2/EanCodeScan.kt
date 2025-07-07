@@ -14,6 +14,8 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 class EanCodeScan : DialogFragment() {
 
     var onResult: ((String) -> Unit)? = null
+    var isTorchOn = false
+
     private lateinit var barcodeView: DecoratedBarcodeView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +36,6 @@ class EanCodeScan : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         barcodeView = view.findViewById(R.id.zxing_barcode_scanner)
-
         barcodeView.decodeContinuous(object : BarcodeCallback {
             override fun barcodeResult(result: BarcodeResult) {
                 barcodeView.pause() // Nur 1x auslösen
@@ -45,9 +46,34 @@ class EanCodeScan : DialogFragment() {
             override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
         })
 
-        val button = view.findViewById<Button>(R.id.EanScanButton)
-        button.setOnClickListener {
-            onResult?.invoke("4316268474382")
+        val buttonFlash = view.findViewById<Button>(R.id.buttonZxingFlashOnOff)
+        buttonFlash.setOnClickListener {
+            if (isTorchOn) {
+                barcodeView.setTorchOff()
+            } else {
+                barcodeView.setTorchOn()
+            }
+            isTorchOn = !isTorchOn
+        }
+
+        val buttonCamera = view.findViewById<Button>(R.id.buttonZxingCameraSwitch)
+        buttonCamera.setOnClickListener {
+
+            var cameraId = barcodeView.cameraSettings.requestedCameraId;
+
+            if (cameraId < 0) { cameraId = 0 }
+            cameraId = cameraId + 1
+            if (cameraId > 1) { cameraId = 0 }
+
+            barcodeView.pause()
+            barcodeView.cameraSettings.requestedCameraId = cameraId
+            barcodeView.resume()
+        }
+
+
+        val buttonTest = view.findViewById<Button>(R.id.buttonZxingTest)
+        buttonTest.setOnClickListener {
+            onResult?.invoke("8076800195057")
             dismiss()
         }
     }
