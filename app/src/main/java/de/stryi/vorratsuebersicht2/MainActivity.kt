@@ -78,19 +78,6 @@ class MainActivity : AppCompatActivity() {
         eanScanFragment.show(supportFragmentManager, "EanCodeScan")
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 1004 && resultCode == Activity.RESULT_OK) {
-            val result = IntentIntegrator.parseActivityResult(resultCode, data)
-            val code = result?.contents
-            if (code != null) {
-                Log.d("SCAN", "Ergebnis: $code")
-            }
-        }
-    }
-
     fun searchEANCode(eanCode: String)
     {
         val result = Database.getArticlesByEanCode(eanCode)

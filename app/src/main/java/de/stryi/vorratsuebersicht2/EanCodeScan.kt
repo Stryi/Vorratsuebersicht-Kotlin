@@ -45,13 +45,11 @@ class EanCodeScan : DialogFragment() {
             override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
         })
 
-        /*
         val button = view.findViewById<Button>(R.id.EanScanButton)
         button.setOnClickListener {
             onResult?.invoke("4316268474382")
             dismiss()
         }
-        */
     }
 
     override fun onResume() {
