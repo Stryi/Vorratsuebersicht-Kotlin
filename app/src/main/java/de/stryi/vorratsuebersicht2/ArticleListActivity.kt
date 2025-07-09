@@ -1,6 +1,7 @@
 package de.stryi.vorratsuebersicht2
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -18,6 +19,21 @@ class ArticleListActivity : AppCompatActivity() {
 
         val listView = findViewById<ListView>(R.id.ArticleList)
 
+        val adapter = object : ArrayAdapter<Article>(this, R.layout.list_item_article, articles) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.list_item_article, parent, false)
+                val item = getItem(position)
+
+                view.findViewById<TextView>(R.id.ArticleListView_Heading).text = item?.name
+                view.findViewById<TextView>(R.id.ArticleListView_SubHeading).text = item?.eanCode
+                //view.findViewById<ImageView>(R.id.image).setImageResource(R.drawable.ic_article) // optional
+
+                return view
+            }
+        }
+        listView.adapter = adapter
+
+        /*
         val adapter = object : ArrayAdapter<Article>(
             this,
             android.R.layout.simple_list_item_2,
@@ -38,5 +54,6 @@ class ArticleListActivity : AppCompatActivity() {
             }
         }
         listView.adapter = adapter
+        */
     }
 }
