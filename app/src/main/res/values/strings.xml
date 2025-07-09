@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vorratsübersicht (Kotlin)</string>
+    <string name="app_name">Neuer Vorratsübersicht</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -13,10 +13,4 @@
         dui nec risus.
     </string>
     <string name="title_activity_article_list">ArticleListActivity</string>
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
-
-        "Motion provides meaning.\n\n"
-
-    </string>
 </resources>
