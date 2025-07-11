@@ -1,10 +1,12 @@
 package de.stryi.vorratsuebersicht2
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -19,14 +21,21 @@ class ArticleListActivity : AppCompatActivity() {
 
         val listView = findViewById<ListView>(R.id.ArticleList)
 
-        val adapter = object : ArrayAdapter<Article>(this, R.layout.list_item_article, articles) {
+        val adapter = object : ArrayAdapter<Article>(this, R.layout.activity_article_list_view, articles) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.list_item_article, parent, false)
+                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.activity_article_list_view, parent, false)
                 val item = getItem(position)
 
+
                 view.findViewById<TextView>(R.id.ArticleListView_Heading).text = item?.name
-                view.findViewById<TextView>(R.id.ArticleListView_SubHeading).text = item?.eanCode
-                //view.findViewById<ImageView>(R.id.image).setImageResource(R.drawable.ic_article) // optional
+                view.findViewById<TextView>(R.id.ArticleListView_SubHeading).text = item?.subHeading
+
+                val image = Database.GetArticleImage(item?.articleId, false);
+
+                if (image.isNotEmpty()) {
+                    val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
+                    view.findViewById<ImageView>(R.id.ArticleListView_Image).setImageBitmap(bitmap)
+                }
 
                 return view
             }

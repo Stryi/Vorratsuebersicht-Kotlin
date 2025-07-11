@@ -7,8 +7,11 @@
 
     <ImageView
         android:id="@+id/ArticleListView_Image"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="74dp"
+        android:layout_height="85dp"
+        android:paddingTop="3dp"
+        android:paddingStart="3dp"
+        android:paddingRight="3dp"
         android:layout_marginEnd="8dp" />
 
     <LinearLayout
@@ -19,16 +22,16 @@
 
         <TextView
             android:id="@+id/ArticleListView_Heading"
-            android:text="Artikelname"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20sp"
+            android:textSize="20sp"
+            />
 
         <TextView
             android:id="@+id/ArticleListView_SubHeading"
-            android:text="Zusätzliche Info"
-            android:textColor="#888888"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

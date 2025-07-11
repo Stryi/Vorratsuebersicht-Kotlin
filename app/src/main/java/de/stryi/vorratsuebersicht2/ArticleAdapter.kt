@@ -3,7 +3,6 @@ package de.stryi.vorratsuebersicht2
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -18,7 +17,7 @@ class ArticleAdapter(private val items: List<Article>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item_article, parent, false)
+            .inflate(R.layout.activity_article_list_view, parent, false)
         return ArticleViewHolder(view)
     }
 

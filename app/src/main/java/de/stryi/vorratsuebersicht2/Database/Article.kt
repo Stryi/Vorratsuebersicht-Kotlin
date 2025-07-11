@@ -1,6 +1,8 @@
 package de.stryi.vorratsuebersicht2
 
 import android.database.Cursor
+import de.stryi.vorratsuebersicht2.Tools.PricePerUnit
+import de.stryi.vorratsuebersicht2.Tools.UnitConvert
 import getDoubleOrNull
 import getIntOrNull
 import getStringOrNull
@@ -47,4 +49,85 @@ class Article {
             return article
         }
     }
+
+    val subHeading: String
+        get() {
+            val info = StringBuilder()
+
+            // Hersteller
+            this.manufacturer?.takeIf { it.isNotBlank() }?.let {
+                info.appendLine("Hersteller: $it")
+            }
+
+            // Kategorie / Unterkategorie
+            val categoryText = buildString {
+                if (!category.isNullOrBlank()) append(category)
+                if (!subCategory.isNullOrBlank()) {
+                    if (isNotEmpty()) append(" / ")
+                    append(subCategory)
+                }
+            }
+            if (categoryText.isNotBlank()) {
+                info.appendLine("Kategorie: $categoryText")
+            }
+
+            // Supermarkt
+            supermarket?.takeIf { it.isNotBlank() }?.let {
+                info.appendLine("Einkaufsmarkt: $it")
+            }
+
+            // Lagerort
+            storageName?.takeIf { it.isNotBlank() }?.let {
+                info.appendLine("Standard Lagerort: $it")
+            }
+
+            // Warnung in Tagen
+            if (durableInfinity == false && warnInDays != null) {
+                info.appendLine("Warnen in Tagen vor Ablauf: ${warnInDays}")
+            }
+
+            // Preis
+            info.append("Preis:")
+            if (price != null) {
+                val priceText = "%.2f".format(price)
+                info.append(" $priceText")
+
+                val pricePerUnit = PricePerUnit.calculate(price, size, unit)
+                if (!pricePerUnit.isNullOrBlank()) {
+                    info.append(" ($pricePerUnit)")
+                }
+            } else {
+                info.append(" -")
+            }
+
+            // Größe
+            if (size != null) {
+                val sizeText = "%.0f".format(size)
+                info.appendLine()
+                info.append("Inhalt/Größe: $sizeText ${unit ?: ""}".trimEnd())
+            }
+
+            // Kalorien
+            info.appendLine()
+            info.append("Kalorien:")
+            if (calorie != null) {
+                val calorieText = "%.0f".format(calorie?.toDouble() ?: 0.0)
+                info.append(" $calorieText")
+
+                if (calorie != 0) {
+                    val unitPerX = UnitConvert.getConvertUnit(unit)
+                    val calPerUnit = UnitConvert.getCaloriePerUnit(
+                        size?.toString(),
+                        unit,
+                        calorie?.toString()
+                    )
+                    if (calPerUnit != "---") {
+                        info.append(" (100 $unitPerX = $calPerUnit)")
+                    }
+                }
+            } else {
+                info.append(" -")
+            }
+            return info.toString().trimEnd()
+        }
 }
