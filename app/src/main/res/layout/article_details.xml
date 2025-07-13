@@ -91,15 +91,15 @@
                     android:id="@+id/ArticleDetails_Manufacturer"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="40dp" />
+                    android:layout_marginEnd="40dp" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectManufacturer"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:text="@string/ThreePoints"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
             <TextView
@@ -138,16 +138,16 @@
                     android:id="@+id/ArticleDetails_SubCategory"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="40dp" />
+                    android:layout_marginEnd="40dp" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectSubCategory"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:text="@string/ThreePoints"
                     android:tag="@id/ArticleDetails_SubCategory"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
             <TextView
@@ -163,7 +163,7 @@
                 android:text="@string/ArticleDetails_CommaSeparatedInput"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10dp"
+                android:textSize="10sp"
                 android:layout_marginTop="0dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp" />
@@ -178,15 +178,15 @@
                     android:id="@+id/ArticleDetails_Supermarket"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="40dp" />
+                    android:layout_marginEnd="40dp" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectSupermarket"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:text="@string/ThreePoints"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
             <TextView
@@ -207,15 +207,15 @@
                     android:id="@+id/ArticleDetails_Storage"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="40dp" />
+                    android:layout_marginEnd="40dp" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectStorage"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:text="@string/ThreePoints"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
             <Switch

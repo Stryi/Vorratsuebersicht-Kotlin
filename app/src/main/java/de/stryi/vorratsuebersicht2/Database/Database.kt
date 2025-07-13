@@ -35,6 +35,21 @@ object Database
         return result
     }
 
+    fun getArticle(articleId: Int): Article? {
+        val query = """
+            SELECT *
+            FROM Article
+            WHERE ArticleId = ?
+            """.trimIndent()
+        val cursor = db.rawQuery(query, arrayOf(articleId.toString()))
+        cursor.use {
+            if (it.moveToFirst()) {
+                return Article.fromCursor(it)
+            }
+        }
+        return null
+    }
+
     fun getArticlesByEanCode(eanCode: String): List<String>
     {
         val result = mutableListOf<String>()
