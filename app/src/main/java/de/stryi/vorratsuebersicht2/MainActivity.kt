@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         val options = arrayOf("Lagerbestand", "Artikeldaten", "Einkaufszettel")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Aktion wählen...")
-        builder.setItems(options) { dialog, which ->
+        builder.setItems(options) { _, which ->
             when (which) {
                 0 -> Log.d("Dialog", "Lagerbestand gewählt")
                 1 -> {

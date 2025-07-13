@@ -1,4 +1,3 @@
-import android.R.string
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import de.stryi.vorratsuebersicht2.Article
@@ -50,15 +49,23 @@ object Database
         return result
     }
 
-    fun GetArticleImage(articleId: Int? , showLarge: Boolean?  = null): ByteArray
+    fun getArticleImage(articleId: Int? , showLarge: Boolean?  = null): ByteArray
     {
+        var cmd = "SELECT ImageId, ArticleId, Type"
+        cmd += if (showLarge == null)
+            ", ImageLarge, ImageSmall"
+        else {
+            if (showLarge)
+                ", ImageLarge"
+            else
+                ", ImageSmall"
+        }
+
+        cmd += " FROM ArticleImage"
+        cmd += " WHERE ArticleId = ?"
+        cmd += " AND Type = 0"
+
         val result = mutableListOf<ByteArray>()
-        val cmd = """
-            SELECT ImageId, ArticleId, Type, ImageSmall
-            FROM ArticleImage
-            WHERE ArticleId = ?
-            AND Type = 0
-        """.trimIndent()
         val cursor = db.rawQuery(cmd, arrayOf(articleId.toString()))
         cursor.use {
             while (it.moveToNext()) {

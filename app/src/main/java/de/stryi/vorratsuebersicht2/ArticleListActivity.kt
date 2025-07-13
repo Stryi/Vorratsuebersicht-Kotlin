@@ -25,17 +25,12 @@ class ArticleListActivity : AppCompatActivity() {
 
         val listView = findViewById<ListView>(R.id.ArticleList)
 
-        listView.setOnItemClickListener(fun(
-            parent: AdapterView<*>,
-            view: View,
-            position: Int,
-            id: Long
-        ) {
+        listView.setOnItemClickListener { _, _, position, _ ->
             val article = articles[position]
             val intent = Intent(this, ArticleDetailsActivity::class.java)
             intent.putExtra("articleId", article.articleId)
             startActivity(intent)
-        })
+        }
 
         val adapter = object : ArrayAdapter<Article>(this, R.layout.article_list_view, articles) {
             @SuppressLint("CutPasteId")
@@ -58,7 +53,7 @@ class ArticleListActivity : AppCompatActivity() {
 
                 val image = view.findViewById<ImageView>(R.id.ArticleListView_Image)
 
-                val byteArray = Database.GetArticleImage(item?.articleId, false)
+                val byteArray = Database.getArticleImage(item?.articleId, false)
 
                 if (byteArray.isEmpty())
                 {
