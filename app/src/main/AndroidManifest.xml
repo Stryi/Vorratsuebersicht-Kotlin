@@ -17,6 +17,10 @@
         android:theme="@style/Theme.VorratsübersichtNeu"
         tools:targetApi="35">
         <activity
+            android:name=".ArticleDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.VorratsübersichtNeu" />
+        <activity
             android:name=".ArticleListActivity"
             android:exported="false"
             android:label="@string/title_activity_article_list"

@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:padding="8dp"
     android:layout_width="fill_parent"
@@ -14,13 +13,14 @@
         android:paddingEnd="3dp"
         android:src="@drawable/photo_camera_24px"
         android:layout_marginEnd="8dp"
-        android:layout_alignParentLeft="true" />
+        android:contentDescription="@string/Picture"
+        android:layout_alignParentStart="true" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginEnd="5dp"
-        android:layout_toRightOf="@id/ArticleListView_Image">
+        android:layout_toEndOf="@id/ArticleListView_Image">
 
         <TextView
             android:id="@+id/ArticleListView_Heading"
@@ -37,7 +37,7 @@
             android:layout_alignParentEnd="true"
             android:alpha="0.5"
             android:gravity="center"
-            android:text="&#8942;"
+            android:text="@string/ListView_Option"
             android:textSize="30sp" />
 
         <TextView
@@ -54,6 +54,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:alpha="0.5"
+            android:contentDescription="@string/Picture"
             android:src="@drawable/assignment_24px" />
 
         <TextView
@@ -71,6 +72,7 @@
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@id/ArticleListView_StorageQuantity"
             android:alpha="0.5"
+            android:contentDescription="@string/Picture"
             android:src="@drawable/shopping_cart_24px" />
 
         <TextView
@@ -87,7 +89,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/ArticleListView_SubHeading"
             android:layout_toStartOf="@id/ArticleListView_ShoppingQuantity"
-            android:text="Notizen"
             android:textSize="14sp" />
 
 

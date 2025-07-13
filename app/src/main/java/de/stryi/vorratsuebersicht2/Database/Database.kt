@@ -39,7 +39,9 @@ object Database
     fun getArticlesByEanCode(eanCode: String): List<String>
     {
         val result = mutableListOf<String>()
-        val cursor = db.rawQuery("SELECT name FROM article WHERE eanCode = ?", arrayOf(eanCode))
+        val cursor = db.rawQuery(
+            "SELECT name FROM article WHERE eanCode = ?",
+            arrayOf(eanCode))
         cursor.use {
             while (it.moveToNext()) {
                 result.add(it.getString(0))

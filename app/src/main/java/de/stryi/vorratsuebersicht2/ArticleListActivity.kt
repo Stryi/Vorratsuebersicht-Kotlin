@@ -1,11 +1,13 @@
 package de.stryi.vorratsuebersicht2
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
@@ -17,16 +19,28 @@ class ArticleListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_article_list)
+        setContentView(R.layout.article_list)
 
         val articles = Database.getArticleList()
 
         val listView = findViewById<ListView>(R.id.ArticleList)
 
-        val adapter = object : ArrayAdapter<Article>(this, R.layout.activity_article_list_view, articles) {
+        listView.setOnItemClickListener(fun(
+            parent: AdapterView<*>,
+            view: View,
+            position: Int,
+            id: Long
+        ) {
+            val article = articles[position]
+            val intent = Intent(this, ArticleDetailsActivity::class.java)
+            intent.putExtra("articleId", article.articleId)
+            startActivity(intent)
+        })
+
+        val adapter = object : ArrayAdapter<Article>(this, R.layout.article_list_view, articles) {
             @SuppressLint("CutPasteId")
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.activity_article_list_view, parent, false)
+                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.article_list_view, parent, false)
                 val item = getItem(position)
 
                 view.findViewById<TextView>(R.id.ArticleListView_Heading).text = item?.name

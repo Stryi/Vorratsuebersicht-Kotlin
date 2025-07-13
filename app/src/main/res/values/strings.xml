@@ -13,4 +13,8 @@
         dui nec risus.
     </string>
     <string name="title_activity_article_list">ArticleListActivity</string>
+
+    <string name="Picture">Bild</string>
+    <string name="ListView_Option">&#8942;</string>
+
 </resources>

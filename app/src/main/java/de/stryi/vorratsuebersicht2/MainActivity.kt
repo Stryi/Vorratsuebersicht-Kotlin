@@ -2,7 +2,6 @@ package de.stryi.vorratsuebersicht2
 
 import Database
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -85,6 +84,9 @@ class MainActivity : AppCompatActivity() {
         if (result.isEmpty())
         {
             // Neuanlage Artikel
+            val articleDetails = Intent(this, ArticleDetailsActivity::class.java)
+            articleDetails.putExtra("EANCode", eanCode)
+            startActivity(articleDetails)
             return
         }
 
@@ -94,7 +96,12 @@ class MainActivity : AppCompatActivity() {
         builder.setItems(options) { dialog, which ->
             when (which) {
                 0 -> Log.d("Dialog", "Lagerbestand gewählt")
-                1 -> Log.d("Dialog", "Artikeldaten gewählt")
+                1 -> {
+                    // Artikelstamm bearbeiten
+                    val articleDetails = Intent(this, ArticleDetailsActivity::class.java)
+                    articleDetails.putExtra("EANCode", eanCode)
+                    startActivity(articleDetails)
+                }
                 2 -> Log.d("Dialog", "Einkaufszettel gewählt")
             }
         }
