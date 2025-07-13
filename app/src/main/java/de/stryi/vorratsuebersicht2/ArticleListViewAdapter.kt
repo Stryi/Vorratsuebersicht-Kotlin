@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ArticleAdapter(private val items: List<Article>) :
-    RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>() {
+class ArticleListViewAdapter(private val items: List<Article>) :
+    RecyclerView.Adapter<ArticleListViewAdapter.ArticleViewHolder>() {
 
     class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameText: TextView = view.findViewById(R.id.ArticleListView_Heading)

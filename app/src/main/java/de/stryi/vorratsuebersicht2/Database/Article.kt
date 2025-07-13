@@ -130,4 +130,16 @@ class Article {
             }
             return info.toString().trimEnd()
         }
+
+    val notesText: String
+        get() {
+            val info = StringBuilder()
+
+            // Hersteller
+            this.notes?.takeIf { it.isNotBlank() }?.let {
+                info.appendLine("Notizen: $it")
+            }
+
+            return info.toString().trimEnd()
+        }
 }

@@ -1,5 +1,6 @@
 package de.stryi.vorratsuebersicht2
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import java.util.Random
 
 class ArticleListActivity : AppCompatActivity() {
 
@@ -22,19 +24,37 @@ class ArticleListActivity : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.ArticleList)
 
         val adapter = object : ArrayAdapter<Article>(this, R.layout.activity_article_list_view, articles) {
+            @SuppressLint("CutPasteId")
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.activity_article_list_view, parent, false)
                 val item = getItem(position)
 
-
                 view.findViewById<TextView>(R.id.ArticleListView_Heading).text = item?.name
                 view.findViewById<TextView>(R.id.ArticleListView_SubHeading).text = item?.subHeading
+                view.findViewById<TextView>(R.id.ArticleListView_Notes).text = item?.notesText
+                view.findViewById<TextView>(R.id.ArticleListView_Notes).visibility = if (item?.notesText.isNullOrEmpty()) View.GONE else View.VISIBLE
 
-                val image = Database.GetArticleImage(item?.articleId, false);
+                view.findViewById<ImageView>(R.id.ArticleListView_OnShoppingList).visibility   = View.VISIBLE
+                view.findViewById<TextView> (R.id.ArticleListView_ShoppingQuantity).visibility = View.VISIBLE
+                view.findViewById<TextView> (R.id.ArticleListView_ShoppingQuantity).text       = Random().nextInt(20).plus(1).toString()
+                view.findViewById<ImageView>(R.id.ArticleListView_IsInStorage).visibility      = View.VISIBLE
+                view.findViewById<TextView> (R.id.ArticleListView_StorageQuantity).visibility  = View.VISIBLE
+                view.findViewById<TextView> (R.id.ArticleListView_StorageQuantity).text        = Random().nextInt(200).plus(1).toString()
 
-                if (image.isNotEmpty()) {
-                    val bitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
-                    view.findViewById<ImageView>(R.id.ArticleListView_Image).setImageBitmap(bitmap)
+
+                val image = view.findViewById<ImageView>(R.id.ArticleListView_Image)
+
+                val byteArray = Database.GetArticleImage(item?.articleId, false)
+
+                if (byteArray.isEmpty())
+                {
+                    image.setImageResource(R.drawable.photo_camera_24px)
+                    image.alpha = 0.2.toFloat()
+                }
+                else
+                {
+                    val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                    image.setImageBitmap(bitmap)
                 }
 
                 return view
