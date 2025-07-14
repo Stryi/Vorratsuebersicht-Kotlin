@@ -1,8 +1,9 @@
 package de.stryi.vorratsuebersicht2
 
 import android.os.Bundle
-import android.text.Editable
 import androidx.appcompat.app.AppCompatActivity
+import de.stryi.vorratsuebersicht2.database.Article
+import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
 
 class ArticleDetailsActivity : AppCompatActivity() {
@@ -16,11 +17,14 @@ class ArticleDetailsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val articleId = intent.getIntExtra("articleId", 0)
-        val article = Database.getArticle(articleId)
+        var article = Database.getArticle(articleId)
+        if (article == null)
+        {
+            article = Article()
+        }
 
-        binding.ArticleDetailsName.setText(article?.name)
-        binding.ArticleDetailsManufacturer.setText(article?.manufacturer)
-        binding.ArticleDetailsSubCategory.setText(article?.subCategory)
-
+        binding.ArticleDetailsName.setText(article.name)
+        binding.ArticleDetailsManufacturer.setText(article.manufacturer)
+        binding.ArticleDetailsSubCategory.setText(article.subCategory)
     }
 }

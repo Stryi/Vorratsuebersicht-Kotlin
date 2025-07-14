@@ -1,4 +1,4 @@
-package de.stryi.vorratsuebersicht2
+package de.stryi.vorratsuebersicht2.database
 
 import android.content.Context
 

@@ -1,4 +1,4 @@
-package de.stryi.vorratsuebersicht2.Tools
+package de.stryi.vorratsuebersicht2.tools
 
 object UnitConvert {
 

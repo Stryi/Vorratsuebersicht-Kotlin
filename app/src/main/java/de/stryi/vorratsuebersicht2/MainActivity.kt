@@ -1,6 +1,6 @@
 package de.stryi.vorratsuebersicht2
 
-import Database
+import de.stryi.vorratsuebersicht2.database.Database
 import android.Manifest
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import de.stryi.vorratsuebersicht2.database.AndroidDatabase
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
 

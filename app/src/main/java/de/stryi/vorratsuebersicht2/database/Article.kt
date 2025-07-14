@@ -1,8 +1,8 @@
-package de.stryi.vorratsuebersicht2
+package de.stryi.vorratsuebersicht2.database
 
 import android.database.Cursor
-import de.stryi.vorratsuebersicht2.Tools.PricePerUnit
-import de.stryi.vorratsuebersicht2.Tools.UnitConvert
+import de.stryi.vorratsuebersicht2.tools.PricePerUnit
+import de.stryi.vorratsuebersicht2.tools.UnitConvert
 import getDoubleOrNull
 import getIntOrNull
 import getStringOrNull

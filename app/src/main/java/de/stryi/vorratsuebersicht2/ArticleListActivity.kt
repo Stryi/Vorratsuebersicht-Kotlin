@@ -12,6 +12,8 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import de.stryi.vorratsuebersicht2.database.Article
+import de.stryi.vorratsuebersicht2.database.Database
 import java.util.Random
 
 class ArticleListActivity : AppCompatActivity() {

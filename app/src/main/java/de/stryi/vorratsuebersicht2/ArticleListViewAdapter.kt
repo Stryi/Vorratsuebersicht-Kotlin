@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import de.stryi.vorratsuebersicht2.database.Article
 
 class ArticleListViewAdapter(private val items: List<Article>) :
     RecyclerView.Adapter<ArticleListViewAdapter.ArticleViewHolder>() {

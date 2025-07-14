@@ -1,4 +1,4 @@
-package de.stryi.vorratsuebersicht2.Tools
+package de.stryi.vorratsuebersicht2.tools
 
 import java.math.BigDecimal
 import java.util.Locale

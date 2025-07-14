@@ -8,7 +8,6 @@ fun Cursor.getStringOrNull2(columnName: String): String?
     return this.getString(index)
 }
 
-
 fun Cursor.getStringOrNull(columnName: String): String? =
     getColumnIndexOrNull(columnName)?.takeIf { !isNull(it) }?.let { getString(it) }
 

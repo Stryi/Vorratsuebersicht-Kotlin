@@ -1,6 +1,7 @@
+package de.stryi.vorratsuebersicht2.database
+
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import de.stryi.vorratsuebersicht2.Article
 
 
 object Database
