@@ -17,6 +17,9 @@
         android:theme="@style/Theme.VorratsübersichtNeu"
         tools:targetApi="35">
         <activity
+            android:name=".Test"
+            android:exported="false" />
+        <activity
             android:name=".ArticleDetailsActivity"
             android:exported="false"
             android:theme="@style/Theme.VorratsübersichtNeu" />

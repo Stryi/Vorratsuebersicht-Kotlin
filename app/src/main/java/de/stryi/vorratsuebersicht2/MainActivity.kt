@@ -7,10 +7,16 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import de.stryi.vorratsuebersicht2.database.AndroidDatabase
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
@@ -18,6 +24,8 @@ import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     val cameraRequestCode = 101
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private lateinit var binding: ActivityMainBinding
 
@@ -28,10 +36,35 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.MainAppBar)
 
         AndroidDatabase.restoreDatabasesFromResourcesOnStartup(this)
 
         Database.init(this, AndroidDatabase.SQLITE_FILENAME_PROD)
+
+        setSupportActionBar(binding.MainAppBar)
+
+        binding.MainAppBar.setNavigationOnClickListener {
+            // Zurück, Menü etc.
+        }
+
+        binding.MainAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.Main_Menu_SelectDatabase -> {
+                    // Handle settings
+                    true
+                }
+                R.id.Main_Menu_Options -> {
+                    // Handle settings
+                    true
+                }
+                else -> false
+            }
+        };
+
+        val buttonCategory = findViewById<Button>(R.id.MainButton_Kategorie)
+        buttonCategory.setOnClickListener {
+        }
 
         val buttonArticle = findViewById<Button>(R.id.MainButton_Artikeldaten)
         buttonArticle.setOnClickListener {
@@ -50,6 +83,11 @@ class MainActivity : AppCompatActivity() {
                 openEanCodeScanner()
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
     }
 
     override fun onRequestPermissionsResult(

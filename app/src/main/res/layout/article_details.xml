@@ -10,6 +10,14 @@
         android:layout_height="wrap_content"
         android:scrollbars="vertical">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/Application_ActionBar_Background"
+            android:titleTextColor="@color/Application_ActionBar_TextColor"
+            android:navigationIcon="@drawable/arrow_back_24px" />
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -91,7 +99,8 @@
                     android:id="@+id/ArticleDetails_Manufacturer"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="40dp" />
+                    android:layout_marginEnd="40dp"
+                    tools:ignore="LabelFor" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectManufacturer"
                     android:layout_width="40dp"
@@ -138,7 +147,8 @@
                     android:id="@+id/ArticleDetails_SubCategory"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="40dp" />
+                    android:layout_marginEnd="40dp"
+                    tools:ignore="LabelFor" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectSubCategory"
                     android:layout_width="40dp"
@@ -163,7 +173,7 @@
                 android:text="@string/ArticleDetails_CommaSeparatedInput"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 android:layout_marginTop="0dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp" />
@@ -178,7 +188,8 @@
                     android:id="@+id/ArticleDetails_Supermarket"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="40dp" />
+                    android:layout_marginEnd="40dp"
+                    tools:ignore="LabelFor" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectSupermarket"
                     android:layout_width="40dp"
@@ -207,7 +218,8 @@
                     android:id="@+id/ArticleDetails_Storage"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="40dp" />
+                    android:layout_marginEnd="40dp"
+                    tools:ignore="LabelFor" />
                 <Button
                     android:id="@+id/ArticleDetails_SelectStorage"
                     android:layout_width="40dp"
@@ -218,7 +230,7 @@
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/ArticleDetails_DurableInfinity"
                 android:text="@string/ArticleDetails_EnduringlyDurable"
                 android:layout_width="fill_parent"
@@ -243,7 +255,9 @@
                     android:id="@+id/ArticleDetails_WarnInDays"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
+                    android:autofillHints="name"
+                    android:inputType="number"
+                    tools:ignore="LabelFor" />
             </LinearLayout>
 
             <LinearLayout
@@ -260,7 +274,9 @@
                     android:id="@+id/ArticleDetails_Price"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+                    android:autofillHints="name"
+                    android:inputType="numberDecimal"
+                    tools:ignore="LabelFor" />
             </LinearLayout>
 
             <LinearLayout
@@ -277,7 +293,9 @@
                     android:id="@+id/ArticleDetails_Size"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number|numberDecimal" />
+                    android:autofillHints="name"
+                    android:inputType="number|numberDecimal"
+                    tools:ignore="LabelFor" />
             </LinearLayout>
 
             <LinearLayout
@@ -294,6 +312,7 @@
                     android:id="@+id/ArticleDetails_Unit"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="name"
                     android:inputType="textNoSuggestions"
                     android:hint="@string/ArticleDetails_Unit_Hint" />
             </LinearLayout>
@@ -322,6 +341,7 @@
                     android:id="@+id/ArticleDetails_CaloriePerUnit"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="name"
                     android:inputType="number" />
             </LinearLayout>
 
@@ -340,6 +360,7 @@
                     android:id="@+id/ArticleDetails_Calorie"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="name"
                     android:inputType="number" />
             </LinearLayout>
 
@@ -357,6 +378,7 @@
                     android:id="@+id/ArticleDetails_MinQuantity"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="name"
                     android:inputType="number" />
             </LinearLayout>
 
@@ -374,6 +396,7 @@
                     android:id="@+id/ArticleDetails_PrefQuantity"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="name"
                     android:inputType="number" />
             </LinearLayout>
 
@@ -390,7 +413,7 @@
                 android:text="@string/ArticleDetails_CommaSeparatedInput"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginTop="0dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp" />
@@ -398,6 +421,7 @@
                 android:id="@+id/ArticleDetails_EANCode"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="name"
                 android:inputType="textVisiblePassword"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp" />
@@ -411,6 +435,7 @@
                 android:layout_marginRight="10dp" />
             <EditText
                 android:id="@+id/ArticleDetails_Notes"
+                android:autofillHints="name"
                 android:inputType="textMultiLine"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

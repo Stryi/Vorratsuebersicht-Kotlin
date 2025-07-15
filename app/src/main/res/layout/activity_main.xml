@@ -9,8 +9,19 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="51dp"
-        android:fitsSystemWindows="true">
+        android:layout_height="?attr/actionBarSize" >
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/MainAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/Application_ActionBar_Background"
+            app:titleTextColor="@color/Application_ActionBar_TextColor"
+            app:iconTint="@color/Application_ActionBar_TextColor"
+            app:navigationIconTint="@color/Application_ActionBar_TextColor"
+            app:menu="@menu/menu_main"
+            app:title="Vorratsübersicht"
+            tools:ignore="MissingConstraints" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
