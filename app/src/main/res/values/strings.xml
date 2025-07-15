@@ -1,4 +1,24 @@
 <resources>
+
+    <!-- Applikations Name-->
+    <string name="App_Name" >Vorratsübersicht</string>
+    <string name="App_Yes" >Ja</string>
+    <string name="App_No" >Nein</string>
+    <string name="App_Ok" >OK</string>
+    <string name="App_Cancel" >Abbrechen</string>
+    <string name="App_Save" >Speichern</string>
+    <string name="App_Replace" >Ersetzen</string>
+    <string name="App_Delete" >Löschen</string>
+    <string name="App_DeleteBig" >LÖSCHEN</string>
+    <string name="App_DoNotDelete" >Nicht löschen</string>
+    <string name="App_Insert" >Hinzufügen</string>
+    <string name="App_Create" >Erstellen</string>
+    <string name="App_Leter" >Später</string>
+    <string name="App_NotToday" >Nicht heute</string>
+    <string name="App_Share" >Teile</string>
+    <string name="App_Search" >Suchen</string>
+    <string name="App_Rename" >Umbenennen</string>
+
     <string name="app_name">Neuer Vorratsübersicht</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
@@ -33,6 +53,18 @@
 
     <!-- Maske Optionen -->
     <string name="Settings_Title" >Einstellungen</string>
+
+    <!-- Artikeldetails Menü -->
+    <string name="ArticleDetails_Menu_DeleteArticle" >Artikel löschen</string>
+    <string name="ArticleDetails_Menu_CreatePicture" >Bild erstellen</string>
+    <string name="ArticleDetails_Menu_SelectPicture" >Bild auswählen</string>
+    <string name="ArticleDetails_Menu_ShowPicture" >Bild bearbeiten</string>
+    <string name="ArticleDetails_Menu_RemovePicture" >Bild entfernen</string>
+    <string name="ArticleDetails_Menu_EAN_Scannen" >EAN Scannen</string>
+    <string name="ArticleDetails_Menu_ToShoppingList" >Auf Einkaufsliste</string>
+    <string name="ArticleDetails_Menu_CurrentStock" >Lagerbestand</string>
+    <string name="ArticleDetails_Menu_VoiceInput" >Spracheingabe</string>
+    <string name="ArticleDetails_Menu_SearchOpenFoodFacts" >Suche auf OpenFoodFacts.org</string>
 
     <!-- Artikeldetails -->
     <string name="ArticleDetails_ArticleName">Artikelname:</string>

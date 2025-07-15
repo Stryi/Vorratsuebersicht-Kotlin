@@ -9,12 +9,12 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" >
+        android:layout_height="@dimen/app_bar_height" >
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/MainAppBar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="@dimen/app_bar_height"
             android:background="@color/Application_ActionBar_Background"
             app:titleTextColor="@color/Application_ActionBar_TextColor"
             app:iconTint="@color/Application_ActionBar_TextColor"

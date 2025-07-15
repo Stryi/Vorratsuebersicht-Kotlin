@@ -8,7 +8,7 @@
     <style name="Theme.VorratsübersichtNeu" parent="Base.Theme.VorratsübersichtNeu" />
 
     <style name="Theme.VorratsübersichtNeu.NoActionBar">
-        <item name="windowActionBar">false</item>
+        <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
     </style>
 
