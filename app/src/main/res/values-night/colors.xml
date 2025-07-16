@@ -9,8 +9,6 @@
     <color name="Text_Color"   type="color">#000000</color>
     <color name="Text_Color2"  type="color">#444444</color>
 
-    <color name="MainButton_Color"  type="color">#555555</color>
-
     <color name="Application_Background" >#FFFFFF</color>
     <color name="Application_Background2">#DDDDDD</color>
     <color name="Application_InfoBackgroud">#FFFFE0</color>

@@ -110,8 +110,7 @@
                     android:id="@+id/ArticleDetails_SelectManufacturer"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:text="@string/ThreePoints"
-                    android:textSize="16sp"
+                    android:drawableTop="@drawable/more_horiz_24px"
                     android:textAllCaps="false"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
@@ -158,9 +157,8 @@
                     android:id="@+id/ArticleDetails_SelectSubCategory"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:text="@string/ThreePoints"
+                    android:drawableTop="@drawable/more_horiz_24px"
                     android:tag="@id/ArticleDetails_SubCategory"
-                    android:textSize="16sp"
                     android:textAllCaps="false"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
@@ -199,7 +197,7 @@
                     android:id="@+id/ArticleDetails_SelectSupermarket"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:text="@string/ThreePoints"
+                    android:drawableTop="@drawable/more_horiz_24px"
                     android:textSize="16sp"
                     android:textAllCaps="false"
                     android:layout_alignParentEnd="true" />
@@ -229,8 +227,7 @@
                     android:id="@+id/ArticleDetails_SelectStorage"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:text="@string/ThreePoints"
-                    android:textSize="16sp"
+                    android:drawableTop="@drawable/more_horiz_24px"
                     android:textAllCaps="false"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
