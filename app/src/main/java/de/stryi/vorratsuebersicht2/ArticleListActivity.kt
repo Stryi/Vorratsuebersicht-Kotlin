@@ -5,15 +5,19 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
+import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
 import java.util.Random
 
 class ArticleListActivity : AppCompatActivity() {
@@ -21,6 +25,13 @@ class ArticleListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.article_list)
+
+        this.setSupportActionBar(findViewById(R.id.ArticleList_AppBar))
+
+        val toolbox = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.ArticleList_AppBar)
+        toolbox.setNavigationOnClickListener {
+            finish()
+        }
 
         val articles = Database.getArticleList()
 
@@ -95,4 +106,34 @@ class ArticleListActivity : AppCompatActivity() {
         listView.adapter = adapter
         */
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.article_list_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.ArticleList_Menu_Add -> {
+                // Handle settings
+                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.ArticleList_Menu_Filter -> {
+                // Handle settings
+                Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.ArticleList_Menu_Share -> {
+                // Handle settings
+                Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show()
+                return true
+            }
+
+
+            else -> return false
+        }
+    }
+
+
 }

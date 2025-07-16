@@ -67,16 +67,15 @@ class MainActivity : AppCompatActivity() {
             R.id.Main_Menu_Options -> {
                 // Handle settings
                 Toast.makeText(this, "Einstellungen", Toast.LENGTH_SHORT).show()
-                true
+                return true
             }
             R.id.Main_Menu_SelectDatabase -> {
                 // Handle settings
                 Toast.makeText(this, "Datenbank auswählen", Toast.LENGTH_SHORT).show()
-                true
+                return true
             }
-            else -> false
+            else -> return false
         }
-        return false
     }
 
     override fun onRequestPermissionsResult(
@@ -134,6 +133,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         builder.show()
-
     }
 }
