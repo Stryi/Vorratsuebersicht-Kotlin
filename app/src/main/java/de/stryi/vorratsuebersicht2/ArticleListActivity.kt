@@ -17,23 +17,26 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
-import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
+import de.stryi.vorratsuebersicht2.databinding.ArticleListBinding
 import java.util.Random
 
 class ArticleListActivity : AppCompatActivity() {
 
+    private lateinit var binding: ArticleListBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.article_list)
 
-        this.setSupportActionBar(findViewById(R.id.ArticleList_AppBar))
+        binding = ArticleListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val toolbox = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.ArticleList_AppBar)
-        toolbox.setNavigationOnClickListener {
-            finish()
-        }
+        this.setSupportActionBar(binding.ArticleListAppBar)
+
+        binding.ArticleListAppBar.setNavigationOnClickListener {finish() }
 
         val articles = Database.getArticleList()
+
+        binding.ArticleListFooter.text = "Anzahl Artikel: ${articles.size}"
 
         val listView = findViewById<ListView>(R.id.ArticleList)
 
@@ -129,8 +132,6 @@ class ArticleListActivity : AppCompatActivity() {
                 Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show()
                 return true
             }
-
-
             else -> return false
         }
     }

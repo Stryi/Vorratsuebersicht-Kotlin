@@ -19,9 +19,9 @@ class ArticleDetailsActivity : AppCompatActivity() {
         binding = ArticleDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.ArticleDetailsAppBar.setNavigationOnClickListener {
-            finish()
-        }
+        this.setSupportActionBar(binding.ArticleDetailsAppBar)
+
+        binding.ArticleDetailsAppBar.setNavigationOnClickListener { finish() }
 
         val articleId = intent.getIntExtra("articleId", 0)
         var article = Database.getArticle(articleId)

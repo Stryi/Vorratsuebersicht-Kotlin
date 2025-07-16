@@ -32,12 +32,11 @@
 
     <!-- Footer -->
     <TextView
-        android:id="@+id/footer_text"
-        android:text="Footer"
+        android:id="@+id/ArticleList_Footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="16sp"
-        android:textColor="#666666" />
+        android:textSize="15sp"
+        android:padding="5dp"
+        android:textColor="@color/Text_Color" />
 
 </LinearLayout>
