@@ -11,7 +11,7 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/ArticleList_AppBar"
-        app:title="@string/Main_Button_ArtikelListe"
+        app:title="@string/ArticleList_Title"
         app:titleTextColor="@color/Application_ActionBar_TextColor"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"

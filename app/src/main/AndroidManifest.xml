@@ -11,24 +11,24 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/App_Name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VorratsübersichtNeu"
+        android:theme="@style/Theme.VorratsuebersichtNeu"
         tools:targetApi="35">
         <activity
             android:name=".ArticleDetailsActivity"
             android:exported="false"
-            android:theme="@style/Theme.VorratsübersichtNeu" />
+            android:theme="@style/Theme.VorratsuebersichtNeu" />
         <activity
             android:name=".ArticleListActivity"
             android:exported="false"
-            android:label="@string/title_activity_article_list"
-            android:theme="@style/Theme.VorratsübersichtNeu.NoActionBar" />
+            android:label="@string/ArticleList_Title"
+            android:theme="@style/Theme.Vorratsuebersicht.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.VorratsübersichtNeu">
+            android:theme="@style/Theme.VorratsuebersichtNeu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
