@@ -50,6 +50,11 @@ class Article {
         }
     }
 
+    val heading: String
+        get() {
+            return this.name ?: ""
+        }
+
     val subHeading: String
         get() {
             val info = StringBuilder()

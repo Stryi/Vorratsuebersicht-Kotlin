@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,11 +21,14 @@ import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleListBinding
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Random
 
 class ArticleListActivity : AppCompatActivity() {
 
-    //var liste = mutableListOf<Article>()
+    private var listViewState: Parcelable? = null
+
 
     private lateinit var binding: ArticleListBinding
 
@@ -39,29 +43,6 @@ class ArticleListActivity : AppCompatActivity() {
         binding.ArticleListAppBar.setNavigationOnClickListener {finish() }
 
         binding.ArticleList.setOnItemClickListener(this::onOpenArticleDetails)
-
-        /*
-        val adapter = object : ArrayAdapter<Article>(
-            this,
-            android.R.layout.simple_list_item_2,
-            android.R.id.text1,
-            articles
-        ) {
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getView(position, convertView, parent)
-                val text1 = view.findViewById<TextView>(android.R.id.text1)
-                val text2 = view.findViewById<TextView>(android.R.id.text2)
-
-                val article = getItem(position)
-                if (article != null) {
-                    text1.text = article.name
-                    text2.text = "${article.eanCode}\r\n${article.category}\r\n${article.manufacturer}"
-                }
-                return view
-            }
-        }
-        listView.adapter = adapter
-        */
 
         showArticleList()
     }
@@ -84,8 +65,7 @@ class ArticleListActivity : AppCompatActivity() {
                 return true
             }
             R.id.ArticleList_Menu_Share -> {
-                // Handle settings
-                Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show()
+                shareList()
                 return true
             }
             else -> return false
@@ -98,20 +78,47 @@ class ArticleListActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.article_list_menu, menu)
     }
 
-    @SuppressLint("StringFormatInvalid")
+    fun shareList()
+    {
+        /* TODO
+        if (MainActivity.IsGooglePlayPreLaunchTestMode)
+        {
+            return;
+        }
+        */
+
+        var text = ""
+        val list = Database.getArticleList()
+
+        for(article in list)
+        {
+            if (article.heading.isNotEmpty())    text += article.heading + "\n"
+            if (article.subHeading.isNotEmpty()) text += article.subHeading + "\n"
+            if (article.notesText.isNotEmpty())  text += article.notesText + "\n"
+            text += "\n"
+        }
+
+        text += binding.ArticleListFooter.text
+
+        val now = LocalDateTime.now()
+
+        val subject = String.format("%s - %s",
+            this.resources.getString(R.string.Main_Button_Artikelangaben),
+            now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")))
+
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        intent.putExtra(Intent.EXTRA_TEXT, text)
+        intent.type = "text/plain"
+
+        startActivity(intent)
+    }
+
     fun showArticleList(text: String? = null)
     {
 
         val articleList = Database.getArticleList()
-
-        /*
-        // Liste merken, damit sie später für ShareList() verwendet werden kann.
-        this.liste.clear()
-        for (article in articles)
-        {
-            liste.add(article)
-        }
-        */
 
         val listView = findViewById<ListView>(R.id.ArticleList)
 
@@ -166,11 +173,29 @@ class ArticleListActivity : AppCompatActivity() {
         binding.ArticleListFooter.text = String.format(status, articleList.count())
     }
 
+
     fun onOpenArticleDetails(parent: AdapterView<*>, view: View?, position: Int, id: Long)
     {
         val articleId = view?.tag as Int
         val intent = Intent(this, ArticleDetailsActivity::class.java)
         intent.putExtra("articleId", articleId)
         startActivity(intent)
+    }
+
+    fun saveListState()
+    {
+        val listView = findViewById<ListView>(R.id.ArticleList)
+        this.listViewState = listView.onSaveInstanceState()
+    }
+
+    fun restoreListState()
+    {
+        val listView = findViewById<ListView>(R.id.ArticleList)
+        listView.onRestoreInstanceState(this.listViewState)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }
