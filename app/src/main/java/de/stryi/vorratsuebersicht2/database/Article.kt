@@ -6,6 +6,9 @@ import de.stryi.vorratsuebersicht2.tools.UnitConvert
 import getDoubleOrNull
 import getIntOrNull
 import getStringOrNull
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 class Article {
     var articleId: Int = 0
@@ -87,8 +90,8 @@ class Article {
             }
 
             // Warnung in Tagen
-            if (durableInfinity == false && warnInDays != null) {
-                info.appendLine("Warnen in Tagen vor Ablauf: ${warnInDays}")
+            if (!durableInfinity && warnInDays != null) {
+                info.appendLine("Warnen in Tagen vor Ablauf: $warnInDays")
             }
 
             // Preis
@@ -98,7 +101,7 @@ class Article {
                 info.append(" $priceText")
 
                 val pricePerUnit = PricePerUnit.calculate(price, size, unit)
-                if (!pricePerUnit.isNullOrBlank()) {
+                if (pricePerUnit.isNotBlank()) {
                     info.append(" ($pricePerUnit)")
                 }
             } else {
@@ -146,5 +149,57 @@ class Article {
             }
 
             return info.toString().trimEnd()
+        }
+
+    var shoppingQuantityCache: Double? = null
+
+    val isOnShoppingList: Boolean
+        get() {
+            if (shoppingQuantityCache == null)
+            {
+                shoppingQuantityCache = Database.getShoppingListQuantiy(
+                    this.articleId,
+                    (-1).toDouble()
+                )
+            }
+            return shoppingQuantityCache!! >= 0.0  // Menge 0 bedeutet: Auf EInkaufszettel, aber ohne Menge.
+        }
+
+    val shoppingQuantity: String
+        get() {
+            if (!isOnShoppingList)
+                return ""
+
+            if (shoppingQuantityCache == 0.toDouble())
+                return ""
+
+            val locale = Locale.getDefault()
+            val symbols = DecimalFormatSymbols(locale)
+            val formatter = DecimalFormat("#,0.######", symbols)
+
+            return formatter.format(shoppingQuantityCache)
+        }
+
+    var storageQuantityCache: Double? = null
+
+    val isInStorage: Boolean
+        get() {
+            if (storageQuantityCache == null)
+            {
+                storageQuantityCache = Database.getArticleQuantityInStorage(this.articleId)
+            }
+            return storageQuantityCache!! > 0.0
+        }
+
+    val storageQuantity: String
+        get() {
+            if (!isInStorage)
+                return "0"
+
+            val locale = Locale.getDefault()
+            val symbols = DecimalFormatSymbols(locale)
+            val formatter = DecimalFormat("#,0.######", symbols)
+
+            return formatter.format(storageQuantityCache)
         }
 }

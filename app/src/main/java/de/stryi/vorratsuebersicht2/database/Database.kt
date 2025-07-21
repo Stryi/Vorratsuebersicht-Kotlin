@@ -2,6 +2,7 @@ package de.stryi.vorratsuebersicht2.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import getDoubleOrNull
 
 
 object Database
@@ -13,9 +14,13 @@ object Database
         db = SQLiteDatabase.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READWRITE)
     }
 
-    fun getArticleList(): List<Article> {
+    fun getArticleList(textFilter: String?): List<Article> {
 
-        val filter = ""
+        var filter = ""
+
+        if (textFilter != null) {
+            filter += "WHERE Name LIKE '%$textFilter%' OR Manufacturer LIKE '%$textFilter%' OR Category LIKE '%$textFilter%' OR SubCategory LIKE '%$textFilter%'"
+        }
 
         val query = """
             SELECT ArticleId, Name, Manufacturer, Category, SubCategory, DurableInfinity, WarnInDays,
@@ -92,5 +97,37 @@ object Database
             return ByteArray(0)
 
         return result[0]
+    }
+
+    fun getShoppingListQuantiy(articleId: Int, notFoundDefault: Double?): Double?
+    {
+        val query = """
+            SELECT Quantity
+            FROM ShoppingList
+            WHERE ArticleId = ?
+        """.trimIndent()
+        val cursor = db.rawQuery(query, arrayOf(articleId.toString()))
+        cursor.use {
+            if (it.moveToFirst()) {
+                return it.getDoubleOrNull("Quantity")
+            }
+        }
+        return notFoundDefault
+    }
+
+    fun getArticleQuantityInStorage(articleId: Int): Double
+    {
+        val query = """
+            SELECT SUM(Quantity) AS Quantity
+            FROM StorageItem
+            WHERE ArticleId = ?
+        """.trimIndent()
+        val cursor = db.rawQuery(query, arrayOf(articleId.toString()))
+        cursor.use {
+            if (it.moveToFirst()) {
+                return it.getDoubleOrNull("Quantity") ?: 0.0
+            }
+        }
+        return 0.0
     }
 }
