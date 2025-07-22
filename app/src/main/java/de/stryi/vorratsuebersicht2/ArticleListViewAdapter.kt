@@ -1,5 +1,6 @@
 package de.stryi.vorratsuebersicht2
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +59,12 @@ class ArticleListViewAdapter(private val articles: List<Article>) :
             holder.storageQuantity.visibility  = View.GONE
         }
 
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ArticleDetailsActivity::class.java)
+            intent.putExtra("articleId", article.articleId)
+            holder.itemView.context.startActivity(intent)
+        }
+        
         val byteArray = Database.getArticleImage(article.articleId, false)
 
         if (byteArray.isEmpty())
