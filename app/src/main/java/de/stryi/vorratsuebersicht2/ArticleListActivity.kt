@@ -7,9 +7,11 @@ import android.os.Parcelable
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
+import android.view.SearchEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
@@ -42,8 +44,28 @@ class ArticleListActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Zeigt die Icons im Menü an, bringt aber Fehler beim Übersetzen
+        // https://medium.com/@ssuubbiirr/optionsmenuitem-with-icon-and-title-in-android-20cdbad87a3f
         //if (menu is MenuBuilder) (menu as MenuBuilder).setOptionalIconsVisible(true)
         menuInflater.inflate(R.menu.article_list_menu, menu)
+
+        val searchItem = menu.findItem(R.id.ArticleList_Menu_Search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.queryHint = "Artikel suchen..."
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Optional: Suche abschließen
+                //showArticleList(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                //filterArticles(newText.orEmpty())
+                showArticleList(newText)
+                return true
+            }
+        })
         return true
     }
 
@@ -73,6 +95,13 @@ class ArticleListActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.article_list_menu, menu)
     }
 
+    override fun onSearchRequested(searchEvent: SearchEvent?): Boolean {
+        return super.onSearchRequested(searchEvent)
+    }
+
+    override fun onSearchRequested(): Boolean {
+        return super.onSearchRequested()
+    }
     fun shareList()
     {
         /* TODO
