@@ -2,11 +2,16 @@ package de.stryi.vorratsuebersicht2
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
@@ -24,6 +29,8 @@ class ArticleListViewAdapter(private val articles: List<Article>) :
         val isInStorage: ImageView = view.findViewById(R.id.ArticleListView_IsInStorage)
         val storageQuantity: TextView = view.findViewById(R.id.ArticleListView_StorageQuantity)
         val image: ImageView = view.findViewById(R.id.ArticleListView_Image)
+        val option: TextView = view.findViewById(R.id.ArticleListView_Option)
+        val articleListViewOption: TextView = view.findViewById(R.id.ArticleListView_Option)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
@@ -47,7 +54,7 @@ class ArticleListViewAdapter(private val articles: List<Article>) :
         holder.shoppingQuantity.text       = article.shoppingQuantity
 
         holder.isInStorage.visibility     = if (article.isInStorage) View.VISIBLE else View.INVISIBLE
-        holder.storageQuantity.visibility = if (article.isInStorage) View.VISIBLE else View.INVISIBLE
+        holder.storageQuantity.visibility = if (article.isInStorage) View.VISIBLE else View.GONE
         holder.storageQuantity.text       = article.storageQuantity
 
         // Mehr Platz für Notizen(?)
@@ -64,22 +71,70 @@ class ArticleListViewAdapter(private val articles: List<Article>) :
             intent.putExtra("articleId", article.articleId)
             holder.itemView.context.startActivity(intent)
         }
-        
+
+        holder.itemView.setOnLongClickListener {
+            val articleId = holder.itemView.tag as Int
+            showContextMenu(holder, articleId)
+            true
+        }
+
+        holder.articleListViewOption.setOnClickListener {
+            val articleId = holder.itemView.tag as Int
+            showContextMenu(holder, articleId);
+        }
+
         val byteArray = Database.getArticleImage(article.articleId, false)
 
         if (byteArray.isEmpty())
         {
             holder.image.setImageResource(R.drawable.photo_camera_24px)
             holder.image.alpha = 0.2.toFloat()
+            holder.image.setOnClickListener { }
         }
         else
         {
             val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
             holder.image.setImageBitmap(bitmap)
             holder.image.alpha = 1.toFloat()
+            holder.image.setOnClickListener {
+                val intent = Intent(holder.image.context, ArticleImageActivity::class.java)
+                intent.putExtra("articleId", article.articleId)
+                holder.image.context.startActivity(intent)
+            }
         }
+    }
 
+    fun showContextMenu(holder: ArticleViewHolder, articleId: Int) {
+        val popupMenu = PopupMenu(holder.itemView.context, holder.option)
+        popupMenu.menuInflater.inflate(R.menu.article_list_contextmenu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { menuItem: MenuItem ->
+            val articleId = holder.itemView.tag
+            when (menuItem.itemId) {
+                R.id.ArticleList_ContextMenu_Lagerbestand -> {
+                    Toast.makeText(holder.itemView.context, "TODO: Lagerbestand aufrufen", Toast.LENGTH_SHORT).show()
+                    /*
+                    var storageDetails = new Intent(this, typeof(StorageItemQuantityActivity));
+                    storageDetails.PutExtra("ArticleId", selectedItem.ArticleId);
 
+                    this.SaveListState();
+                    this.StartActivityForResult(storageDetails, 20);
+                    */
+                    true
+                }
+                R.id.ArticleList_ContextMenu_AufEinkaufszettel -> {
+                    Toast.makeText(holder.itemView.context, "TODO: Auf Einkaufsliste aufrufen", Toast.LENGTH_SHORT).show()
+                    /*
+                    AddToShoppingListDialog.ShowDialog(
+                        this,
+                        selectedItem.ArticleId,
+                        null, null, this.RefreshArticleList);
+                    */
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 
     override fun getItemCount(): Int = articles.size

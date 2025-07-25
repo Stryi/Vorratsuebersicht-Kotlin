@@ -1,6 +1,7 @@
 package de.stryi.vorratsuebersicht2
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.ContextMenu
@@ -11,6 +12,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleListBinding
@@ -20,7 +22,6 @@ import java.time.format.DateTimeFormatter
 class ArticleListActivity : AppCompatActivity() {
 
     private var listViewState: Parcelable? = null
-
 
     private lateinit var binding: ArticleListBinding
 
@@ -34,12 +35,14 @@ class ArticleListActivity : AppCompatActivity() {
 
         binding.ArticleListAppBar.setNavigationOnClickListener {finish() }
 
-        //binding.ArticleList.setOnItemClickListener(this::onOpenArticleDetails)
+        binding.ArticleList.isClickable = true;
 
         showArticleList()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Zeigt die Icons im Menü an, bringt aber Fehler beim Übersetzen
+        //if (menu is MenuBuilder) (menu as MenuBuilder).setOptionalIconsVisible(true)
         menuInflater.inflate(R.menu.article_list_menu, menu)
         return true
     }
