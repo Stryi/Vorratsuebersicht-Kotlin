@@ -1,7 +1,8 @@
 package de.stryi.vorratsuebersicht2
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.ContextMenu
@@ -9,13 +10,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SearchEvent
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.MenuBuilder
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleListBinding
 import java.time.LocalDateTime
@@ -24,8 +26,19 @@ import java.time.format.DateTimeFormatter
 class ArticleListActivity : AppCompatActivity() {
 
     private var listViewState: Parcelable? = null
-
     private lateinit var binding: ArticleListBinding
+
+    private val detailLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                //val data = result.data
+                //val updatedArticleId = data?.getIntExtra("articleId", -1)
+
+                showArticleList()
+
+                binding.ArticleList.layoutManager?.onRestoreInstanceState(listViewState)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +48,9 @@ class ArticleListActivity : AppCompatActivity() {
 
         this.setSupportActionBar(binding.ArticleListAppBar)
 
-        binding.ArticleListAppBar.setNavigationOnClickListener {finish() }
+        binding.ArticleListAppBar.setNavigationOnClickListener { finish() }
 
-        binding.ArticleList.isClickable = true;
+        binding.ArticleList.isClickable = true
 
         showArticleList()
     }
@@ -72,8 +85,7 @@ class ArticleListActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.ArticleList_Menu_Add -> {
-                // Handle settings
-                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show()
+                onCreateArticle();
                 return true
             }
             R.id.ArticleList_Menu_Filter -> {
@@ -90,18 +102,42 @@ class ArticleListActivity : AppCompatActivity() {
     }
 
 
-    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        menuInflater.inflate(R.menu.article_list_menu, menu)
+    fun showArticleList(text: String? = null)
+    {
+        val articleList = Database.getArticleList(text)
+
+        val adapter = ArticleListViewAdapter(articleList, this::onOpenArticleDetails)
+
+        val recyclerView = findViewById<RecyclerView>(R.id.ArticleList)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        var status: String
+
+        if (articleList.count() == 1)
+            status = this.resources.getString(R.string.ArticleListSummary_Position)
+        else
+            status = this.resources.getString(R.string.ArticleListSummary_Positions)
+
+        binding.ArticleListFooter.text = String.format(status, articleList.count())
     }
 
-    override fun onSearchRequested(searchEvent: SearchEvent?): Boolean {
-        return super.onSearchRequested(searchEvent)
+
+    fun onOpenArticleDetails(articleId: Int)
+    {
+        listViewState = binding.ArticleList.layoutManager?.onSaveInstanceState()
+
+        val intent = Intent(this, ArticleDetailsActivity::class.java)
+        intent.putExtra("articleId", articleId)
+        detailLauncher.launch(intent)
     }
 
-    override fun onSearchRequested(): Boolean {
-        return super.onSearchRequested()
+    fun onCreateArticle()
+    {
+        val intent = Intent(this, ArticleDetailsActivity::class.java)
+        detailLauncher.launch(intent)
     }
+
     fun shareList()
     {
         /* TODO
@@ -137,52 +173,5 @@ class ArticleListActivity : AppCompatActivity() {
         intent.type = "text/plain"
 
         startActivity(intent)
-    }
-
-    fun showArticleList(text: String? = null)
-    {
-
-        val articleList = Database.getArticleList(text)
-
-        val adapter = ArticleListViewAdapter(articleList)
-
-        val recyclerView = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.ArticleList)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-
-        var status = ""
-
-        if (articleList.count() == 1)
-            status = this.resources.getString(R.string.ArticleListSummary_Position)
-        else
-            status = this.resources.getString(R.string.ArticleListSummary_Positions)
-
-        binding.ArticleListFooter.text = String.format(status, articleList.count())
-    }
-
-
-    fun onOpenArticleDetails(parent: AdapterView<*>, view: View?, position: Int, id: Long)
-    {
-        val articleId = view?.tag as Int
-        val intent = Intent(this, ArticleDetailsActivity::class.java)
-        intent.putExtra("articleId", articleId)
-        startActivity(intent)
-    }
-
-    fun saveListState()
-    {
-        val listView = findViewById<ListView>(R.id.ArticleList)
-        this.listViewState = listView.onSaveInstanceState()
-    }
-
-    fun restoreListState()
-    {
-        val listView = findViewById<ListView>(R.id.ArticleList)
-        listView.onRestoreInstanceState(this.listViewState)
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }

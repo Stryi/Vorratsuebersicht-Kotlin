@@ -99,6 +99,19 @@ object Database
         return result[0]
     }
 
+    fun updateArticle(article: Article)
+    {
+        val query = """
+            UPDATE Article
+            SET Name = ?, Manufacturer = ?, Category = ?, SubCategory = ?, DurableInfinity = ?, WarnInDays = ?,
+                Size = ?, Unit = ?, Notes = ?, EANCode = ?, Calorie = ?, Price = ?, StorageName = ?, Supermarket = ?
+            WHERE ArticleId = ?
+        """.trimIndent()
+        db.execSQL(query, arrayOf(article.name, article.manufacturer, article.category, article.subCategory,
+            article.durableInfinity, article.warnInDays, article.size, article.unit, article.notes, article.eanCode,
+            article.calorie, article.price, article.storageName, article.supermarket, article.articleId))
+    }
+
     fun getShoppingListQuantiy(articleId: Int, notFoundDefault: Double?): Double?
     {
         val query = """

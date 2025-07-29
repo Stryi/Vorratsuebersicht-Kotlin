@@ -16,7 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
 
-class ArticleListViewAdapter(private val articles: List<Article>) :
+class ArticleListViewAdapter(private val articles: List<Article>,
+                             private val onItemClick: (articleId: Int) -> Unit) :
     RecyclerView.Adapter<ArticleListViewAdapter.ArticleViewHolder>()
 {
     class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view)
@@ -57,7 +58,7 @@ class ArticleListViewAdapter(private val articles: List<Article>) :
         holder.storageQuantity.visibility = if (article.isInStorage) View.VISIBLE else View.GONE
         holder.storageQuantity.text       = article.storageQuantity
 
-        // Mehr Platz für Notizen(?)
+        // Mehr Platz für Notizen
         if (!article.isOnShoppingList && !article.isInStorage)
         {
             holder.onShoppingList.visibility   = View.GONE
@@ -67,9 +68,7 @@ class ArticleListViewAdapter(private val articles: List<Article>) :
         }
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, ArticleDetailsActivity::class.java)
-            intent.putExtra("articleId", article.articleId)
-            holder.itemView.context.startActivity(intent)
+            onItemClick(article.articleId)
         }
 
         holder.itemView.setOnLongClickListener {
