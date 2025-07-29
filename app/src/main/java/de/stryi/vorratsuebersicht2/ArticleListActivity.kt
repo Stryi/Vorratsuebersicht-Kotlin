@@ -1,20 +1,13 @@
 package de.stryi.vorratsuebersicht2
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
-import android.view.SearchEvent
-import android.view.View
-import android.widget.ListView
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -85,7 +78,7 @@ class ArticleListActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.ArticleList_Menu_Add -> {
-                onCreateArticle();
+                onCreateArticle()
                 return true
             }
             R.id.ArticleList_Menu_Filter -> {
@@ -112,12 +105,10 @@ class ArticleListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        var status: String
-
-        if (articleList.count() == 1)
-            status = this.resources.getString(R.string.ArticleListSummary_Position)
+        val status = if (articleList.count() == 1)
+            this.resources.getString(R.string.ArticleListSummary_Position)
         else
-            status = this.resources.getString(R.string.ArticleListSummary_Positions)
+            this.resources.getString(R.string.ArticleListSummary_Positions)
 
         binding.ArticleListFooter.text = String.format(status, articleList.count())
     }
