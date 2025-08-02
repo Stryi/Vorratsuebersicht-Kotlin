@@ -17,9 +17,12 @@ import de.stryi.vorratsuebersicht2.database.AndroidDatabase
 import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity() {
+ class MainActivity : AppCompatActivity() {
 
     val cameraRequestCode = 101
+    companion object {
+        var IsGooglePlayPreLaunchTestMode: Boolean = false
+    }
 
     private lateinit var binding: ActivityMainBinding
 

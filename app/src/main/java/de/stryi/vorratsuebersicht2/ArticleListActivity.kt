@@ -1,5 +1,6 @@
 package de.stryi.vorratsuebersicht2
 
+import android.R.string
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
@@ -10,13 +11,15 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleListBinding
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+
 class ArticleListActivity : AppCompatActivity() {
+
+    private var lastSearchText: String = ""
 
     private var listViewState: Parcelable? = null
     private lateinit var binding: ArticleListBinding
@@ -27,7 +30,7 @@ class ArticleListActivity : AppCompatActivity() {
                 //val data = result.data
                 //val updatedArticleId = data?.getIntExtra("articleId", -1)
 
-                showArticleList()
+                showArticleList(lastSearchText)
 
                 binding.ArticleList.layoutManager?.onRestoreInstanceState(listViewState)
             }
@@ -67,8 +70,8 @@ class ArticleListActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                //filterArticles(newText.orEmpty())
                 showArticleList(newText)
+                lastSearchText = newText.orEmpty()
                 return true
             }
         })
@@ -94,16 +97,14 @@ class ArticleListActivity : AppCompatActivity() {
         }
     }
 
-
     fun showArticleList(text: String? = null)
     {
         val articleList = Database.getArticleList(text)
 
         val adapter = ArticleListViewAdapter(articleList, this::onOpenArticleDetails)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.ArticleList)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+        binding.ArticleList.layoutManager = LinearLayoutManager(this)
+        binding.ArticleList.adapter = adapter
 
         val status = if (articleList.count() == 1)
             this.resources.getString(R.string.ArticleListSummary_Position)
@@ -125,21 +126,23 @@ class ArticleListActivity : AppCompatActivity() {
 
     fun onCreateArticle()
     {
+        listViewState = binding.ArticleList.layoutManager?.onSaveInstanceState()
+
         val intent = Intent(this, ArticleDetailsActivity::class.java)
         detailLauncher.launch(intent)
     }
 
     fun shareList()
     {
-        /* TODO
         if (MainActivity.IsGooglePlayPreLaunchTestMode)
         {
             return;
         }
-        */
+
+        val adapter = binding.ArticleList.adapter as ArticleListViewAdapter
 
         var text = ""
-        val list = Database.getArticleList(text)
+        val list = Database.getArticleList(lastSearchText)
 
         for(article in list)
         {

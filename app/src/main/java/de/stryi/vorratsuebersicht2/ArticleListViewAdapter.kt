@@ -2,7 +2,6 @@ package de.stryi.vorratsuebersicht2
 
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -11,7 +10,6 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
@@ -79,7 +77,7 @@ class ArticleListViewAdapter(private val articles: List<Article>,
 
         holder.articleListViewOption.setOnClickListener {
             val articleId = holder.itemView.tag as Int
-            showContextMenu(holder, articleId);
+            showContextMenu(holder, articleId)
         }
 
         val byteArray = Database.getArticleImage(article.articleId, false)
