@@ -1,5 +1,6 @@
 package de.stryi.vorratsuebersicht2.database
 
+import android.R
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import getDoubleOrNull
@@ -14,13 +15,129 @@ object Database
         db = SQLiteDatabase.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READWRITE)
     }
 
-    fun getArticleList(textFilter: String?): List<Article> {
+    fun getArticleList(
+        category: String,
+        subCategory: String,
+        eanCode: String?,
+        notInStorage: Boolean,
+        notInShoppingList: Boolean,
+        withoutCategory: Boolean,
+        specialFilter: Int,
+        textFilter: String?
+    ): List<Article> {
+
+        val parameter = mutableListOf<String>()
 
         var filter = ""
 
-        if (textFilter != null) {
-            filter += "WHERE Name LIKE '%$textFilter%' OR Manufacturer LIKE '%$textFilter%' OR Category LIKE '%$textFilter%' OR SubCategory LIKE '%$textFilter%'"
+        if (category.isNotEmpty())
+        {
+            filter += " WHERE Article.Category = ?"
+            parameter.add(category)
         }
+
+        if (subCategory.isNotEmpty())
+        {
+            if (filter.isNotEmpty())
+                filter += " AND "
+            else
+                filter += " WHERE "
+
+            filter += " Article.SubCategory = ?"
+            parameter.add(subCategory)
+        }
+
+        if (withoutCategory)
+        {
+            if (filter.isNotEmpty())
+                filter += " AND "
+            else
+                filter += " WHERE "
+
+            filter += " ((IFNULL(Article.SubCategory, '') = '') OR (IFNULL(Article.SubCategory, '') = ''))"
+            parameter.add(subCategory)
+        }
+
+        if (!eanCode.isNullOrEmpty())
+        {
+            if (filter.isNotEmpty())
+                filter += " AND "
+            else
+                filter += " WHERE "
+
+            filter += " Article.EANCode LIKE ?"
+            parameter.add("%$eanCode%")
+        }
+
+        if (!textFilter.isNullOrEmpty())
+        {
+            if (filter.isNotEmpty()) filter += " AND "
+            else filter += " WHERE "
+
+            when (textFilter.uppercase()) {
+                "P-" -> filter += " Article.Price IS NULL"
+                "K-" -> filter += " Article.Calorie IS NULL"
+                "B+" -> {
+                    // Artikel zum [B]estellen.
+                    filter += " ArticleId NOT IN (SELECT ArticleId FROM ShoppingList)"
+                    filter += " AND "
+                    filter += " ArticleId NOT IN (SELECT ArticleId FROM StorageItem)"
+                }
+
+                else -> {
+                    filter += " (Article.Name LIKE ? OR Article.Manufacturer LIKE ? OR Article.Notes LIKE ? OR Article.Supermarket LIKE ?"
+                    filter += " OR Article.StorageName LIKE ? OR Article.Category LIKE ? OR Article.SubCategory LIKE ? OR Article.EANCode LIKE ?)"
+                    parameter.add("%$textFilter%")
+                    parameter.add("%$textFilter%")
+                    parameter.add("%$textFilter%")
+                    parameter.add("%$textFilter%")
+                    parameter.add("%$textFilter%")
+                    parameter.add("%$textFilter%")
+                    parameter.add("%$textFilter%")
+                    parameter.add("%$textFilter%")
+                }
+            }
+        }
+
+        if (notInStorage)
+        {
+            if (filter.isNotEmpty())
+                filter += " AND "
+            else
+                filter += " WHERE "
+
+            filter += "ArticleId NOT IN (SELECT ArticleId FROM StorageItem)"
+        }
+
+        if (notInShoppingList)
+        {
+            if (filter.isNotEmpty())
+                filter += " AND "
+            else
+                filter += " WHERE "
+
+            filter += "ArticleId NOT IN (SELECT ArticleId FROM ShoppingList)"
+        }
+
+        if (specialFilter > 0)
+        {
+            if (filter.isNotEmpty()) filter += " AND "
+            else filter += " WHERE "
+
+            when (specialFilter) {
+                1 -> filter += " Article.Price IS NULL"
+                2 -> filter += " Article.Calorie IS NULL"
+                3 -> {
+                    // Artikel zum [B]estellen.
+                    filter += " ArticleId NOT IN (SELECT ArticleId FROM ShoppingList)"
+                    filter += " AND "
+                    filter += " ArticleId NOT IN (SELECT ArticleId FROM StorageItem)"
+                }
+
+                4 -> filter += " ((Article.StorageName IS NULL) OR (Article.StorageName == ''))"
+            }
+        }
+
 
         val query = """
             SELECT ArticleId, Name, Manufacturer, Category, SubCategory, DurableInfinity, WarnInDays,
@@ -31,7 +148,7 @@ object Database
         """.trimIndent()
 
         val result = mutableListOf<Article>()
-        val cursor = db.rawQuery(query, null)
+        val cursor = db.rawQuery(query, parameter.toTypedArray())
         cursor.use {
             while (it.moveToNext()) {
                 val article = Article.fromCursor(it)
@@ -142,5 +259,44 @@ object Database
             }
         }
         return 0.0
+    }
+
+    fun getCategoryAndSubcategoryNames(): MutableList<String> {
+        val query = """
+            SELECT DISTINCT Category, SubCategory
+            FROM Article
+            WHERE Category IS NOT NULL
+            ORDER BY Category COLLATE NOCASE, SubCategory COLLATE NOCASE
+        """.trimIndent()
+        val cursor = db.rawQuery(query, null)
+
+        var lastCategory: String = ""
+        val stringList: MutableList<String> = mutableListOf()
+
+        cursor.use {
+            while (it.moveToNext()) {
+                val article = Article.fromCursor(it)
+                val categoryName = article.category
+                val subCategoryName = article.subCategory
+
+                if ((categoryName == null) && (subCategoryName == null))
+                    continue
+
+                if (categoryName != lastCategory)
+                {
+                    stringList.add(categoryName.toString())
+                    lastCategory = categoryName.toString()
+                }
+
+                if (!subCategoryName.isNullOrBlank())
+                {
+                    // Die Zeichenfülge "  - " vor dem {0} ist wichtig
+                    // für das Erkennen der Unterkategorie bei Auswahl.
+
+                    stringList.add(String.format("  - %s", subCategoryName));
+                }
+            }
+        }
+        return stringList
     }
 }

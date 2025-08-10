@@ -1,11 +1,14 @@
 package de.stryi.vorratsuebersicht2
 
-import android.R.string
+import android.R.bool
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,7 +22,14 @@ import java.time.format.DateTimeFormatter
 
 class ArticleListActivity : AppCompatActivity() {
 
-    private var lastSearchText: String = ""
+    private var category: String  = ""
+    private var subCategory: String  = ""
+    private var withoutCategory: Boolean  = false
+    private val notInStorage: Boolean = false
+    private val notInShoppingList: Boolean = false
+    private val eanCode: String? = null
+    private var lastSearchText: String? = ""
+    private val specialFilter = 0
 
     private var listViewState: Parcelable? = null
     private lateinit var binding: ArticleListBinding
@@ -47,6 +57,32 @@ class ArticleListActivity : AppCompatActivity() {
         binding.ArticleListAppBar.setNavigationOnClickListener { finish() }
 
         binding.ArticleList.isClickable = true
+
+        // ArticleListeSpecialFilter
+        val filters = this.resources.getTextArray(R.array.ArticleListeSpecialFilter)
+        binding.ArticleListFilter.text = filters[0]
+
+        val categoryList = mutableListOf<String?>()
+        categoryList.add(this.resources.getString(R.string.ArticleList_AllCategories))
+        categoryList.add(this.resources.getString( R.string.ArticleList_NoCategories))
+        categoryList.addAll(Database.getCategoryAndSubcategoryNames())
+
+        val dataAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryList)
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.ArticleListCategories.adapter = dataAdapter
+        binding.ArticleListCategories.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedCategory = parent.getItemAtPosition(position) as String
+                spinnerCategoryItemSelected(position, selectedCategory)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Optional: Verhalten, wenn nichts ausgewählt ist
+                spinnerCategoryItemSelected(0, "")
+            }
+        }
+
 
         showArticleList()
     }
@@ -99,7 +135,15 @@ class ArticleListActivity : AppCompatActivity() {
 
     fun showArticleList(text: String? = null)
     {
-        val articleList = Database.getArticleList(text)
+        val articleList = Database.getArticleList(
+            this.category,
+            this.subCategory,
+            this.eanCode,
+            this.notInStorage,
+            this.notInShoppingList,
+            this.withoutCategory,
+            this.specialFilter,
+            text)
 
         val adapter = ArticleListViewAdapter(articleList, this::onOpenArticleDetails)
 
@@ -132,17 +176,58 @@ class ArticleListActivity : AppCompatActivity() {
         detailLauncher.launch(intent)
     }
 
+     fun spinnerCategoryItemSelected(position: Int, categoryText: String)
+     {
+         var newCategoryName: String = ""
+         var newSubCategoryName: String = ""
+         var withoutCategory: Boolean = false
+
+         var name = categoryText
+
+         if (position == 1)
+         {
+             withoutCategory = true
+         }
+
+         if (position > 1)
+         {
+             if (name.startsWith("  - "))    // Ist das ein SubCategory?
+             {
+                 name = name.substring(4)  // Mach aus "  - Gulasch" ein "Gulasch"
+                 newSubCategoryName = name
+             } else
+             {
+                 newCategoryName = name
+             }
+         }
+         if ((newCategoryName != this.category) || (newSubCategoryName != this.subCategory) || withoutCategory != this.withoutCategory)
+         {
+             this.category        = newCategoryName;
+             this.subCategory     = newSubCategoryName;
+             this.withoutCategory = withoutCategory;
+
+             this.showArticleList(this.lastSearchText);
+         }
+     }
+
+
     fun shareList()
     {
         if (MainActivity.IsGooglePlayPreLaunchTestMode)
         {
-            return;
+            return
         }
 
-        val adapter = binding.ArticleList.adapter as ArticleListViewAdapter
-
         var text = ""
-        val list = Database.getArticleList(lastSearchText)
+        val list = Database.getArticleList(
+            this.category,
+            this.subCategory,
+            this.eanCode,
+            this.notInStorage,
+            this.notInShoppingList,
+            this.withoutCategory,
+            this.specialFilter,
+            lastSearchText)
 
         for(article in list)
         {
