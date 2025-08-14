@@ -57,14 +57,11 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textSize="20sp"
-            android:textColor="@color/Text_Color"
             android:text="@string/ArticleDetails_Category" />
         <Spinner
             android:id="@+id/ArticleList_Categories"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/Text_Color"
-            android:background="@color/Application_Background2"
             android:padding="10dp" />
     </LinearLayout>
 
