@@ -54,8 +54,8 @@ object Database
             else
                 filter += " WHERE "
 
-            filter += " ((IFNULL(Article.SubCategory, '') = '') OR (IFNULL(Article.SubCategory, '') = ''))"
-            parameter.add(subCategory)
+            filter += " (Article.Category IS NULL OR Article.Category = ''" +
+                    " OR Article.SubCategory IS NULL OR Article.SubCategory = '') "
         }
 
         if (!eanCode.isNullOrEmpty())
