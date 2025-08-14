@@ -1,6 +1,5 @@
 package de.stryi.vorratsuebersicht2
 
-import android.R.bool
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
@@ -178,9 +177,9 @@ class ArticleListActivity : AppCompatActivity() {
 
      fun spinnerCategoryItemSelected(position: Int, categoryText: String)
      {
-         var newCategoryName: String = ""
-         var newSubCategoryName: String = ""
-         var withoutCategory: Boolean = false
+         var newCategoryName = ""
+         var newSubCategoryName  = ""
+         var withoutCategory = false
 
          var name = categoryText
 
@@ -202,11 +201,11 @@ class ArticleListActivity : AppCompatActivity() {
          }
          if ((newCategoryName != this.category) || (newSubCategoryName != this.subCategory) || withoutCategory != this.withoutCategory)
          {
-             this.category        = newCategoryName;
-             this.subCategory     = newSubCategoryName;
-             this.withoutCategory = withoutCategory;
+             this.category        = newCategoryName
+             this.subCategory     = newSubCategoryName
+             this.withoutCategory = withoutCategory
 
-             this.showArticleList(this.lastSearchText);
+             this.showArticleList(this.lastSearchText)
          }
      }
 
