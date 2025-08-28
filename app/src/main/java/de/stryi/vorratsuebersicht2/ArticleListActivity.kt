@@ -9,8 +9,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.stryi.vorratsuebersicht2.database.Database
@@ -28,7 +28,7 @@ class ArticleListActivity : AppCompatActivity() {
     private val notInShoppingList: Boolean = false
     private val eanCode: String? = null
     private var lastSearchText: String? = ""
-    private val specialFilter = 0
+    private var specialFilter = 0
 
     private var listViewState: Parcelable? = null
     private lateinit var binding: ArticleListBinding
@@ -82,8 +82,36 @@ class ArticleListActivity : AppCompatActivity() {
             }
         }
 
+        binding.ArticleListFilterBanner.setOnClickListener {
+
+            this.filterArticleList()
+        }
+
+        binding.ArticleListFilterClear.setOnClickListener {
+            this.specialFilter = 0
+            this.binding.ArticleListFilter.text = ""
+            this.binding.ArticleListFilterBanner.visibility = View.GONE
+        }
 
         showArticleList()
+    }
+
+    private fun filterArticleList()
+    {
+        // ArticleListeSpecialFilter
+        val actions = this.resources.getTextArray(R.array.ArticleListeSpecialFilter)
+
+        val builder = AlertDialog.Builder(this)
+        builder.setItems(actions) { _, which ->
+            this.specialFilter = which + 1
+
+            binding.ArticleListFilter.text = actions[which]
+            binding.ArticleListFilterBanner.visibility = View.VISIBLE
+
+            this.showArticleList()
+        }
+        builder.show()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -121,7 +149,7 @@ class ArticleListActivity : AppCompatActivity() {
             }
             R.id.ArticleList_Menu_Filter -> {
                 // Handle settings
-                Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show()
+                this.filterArticleList()
                 return true
             }
             R.id.ArticleList_Menu_Share -> {
