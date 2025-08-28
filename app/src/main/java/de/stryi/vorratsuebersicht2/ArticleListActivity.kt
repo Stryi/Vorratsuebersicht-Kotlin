@@ -91,6 +91,8 @@ class ArticleListActivity : AppCompatActivity() {
             this.specialFilter = 0
             this.binding.ArticleListFilter.text = ""
             this.binding.ArticleListFilterBanner.visibility = View.GONE
+
+            this.showArticleList()
         }
 
         showArticleList()
