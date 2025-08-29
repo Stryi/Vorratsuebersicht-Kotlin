@@ -1,20 +1,27 @@
 package de.stryi.vorratsuebersicht2
 
+import android.R.string
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
 
+
 class ArticleDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ArticleDetailsBinding
 
     private var isChanged: Boolean = false
+
+    val  manufacturers = mutableListOf<String?>()
+
+    //private var manufacturers =
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +44,35 @@ class ArticleDetailsActivity : AppCompatActivity() {
         binding.ArticleDetailsName.setText(article.name)
         binding.ArticleDetailsManufacturer.setText(article.manufacturer)
         binding.ArticleDetailsSubCategory.setText(article.subCategory)
+
+        // Hersteller Eingabe
+        this.manufacturers.addAll(Database.getManufacturerNames())
+        binding.ArticleDetailsManufacturer.threshold = 1
+        val manufacturerAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            manufacturers
+        )
+        binding.ArticleDetailsManufacturer.setAdapter(manufacturerAdapter)
+
+        binding.ArticleDetailsSelectManufacturer.setOnClickListener {
+            this.selectManufacturer()
+        }
+
+        // Kategorie
+
+
+
+    }
+
+    private fun selectManufacturer()
+    {
+        var builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle(R.string.ArticleDetails_Manufacturer)
+        builder.setItems(this.manufacturers.toTypedArray()) { _, which ->
+            binding.ArticleDetailsManufacturer.setText(this.manufacturers[which])
+        }
+        builder.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

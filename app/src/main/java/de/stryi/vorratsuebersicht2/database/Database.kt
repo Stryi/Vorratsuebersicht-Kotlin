@@ -299,4 +299,23 @@ object Database
         }
         return stringList
     }
+
+    fun getManufacturerNames(): MutableList<String> {
+        val query = """
+            SELECT DISTINCT Manufacturer
+            FROM Article
+            WHERE Manufacturer IS NOT NULL
+            AND Manufacturer <> ''
+            ORDER BY StorageName COLLATE NOCASE
+            
+            """.trimIndent()
+        val cursor = db.rawQuery(query, null)
+        val stringList: MutableList<String> = mutableListOf()
+        cursor.use {
+            while (it.moveToNext()) {
+                stringList.add(it.getString(0))
+            }
+        }
+        return stringList
+    }
 }
