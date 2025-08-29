@@ -1,7 +1,7 @@
 package de.stryi.vorratsuebersicht2.database
 
-import android.R
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import getDoubleOrNull
 
@@ -175,15 +175,10 @@ object Database
 
     fun getArticlesByEanCode(eanCode: String): List<String>
     {
-        val result = mutableListOf<String>()
-        val cursor = db.rawQuery(
+        val result = db.queryStringList(
             "SELECT name FROM article WHERE eanCode = ?",
             arrayOf(eanCode))
-        cursor.use {
-            while (it.moveToNext()) {
-                result.add(it.getString(0))
-            }
-        }
+
         return result
     }
 
@@ -270,7 +265,7 @@ object Database
         """.trimIndent()
         val cursor = db.rawQuery(query, null)
 
-        var lastCategory: String = ""
+        var lastCategory = ""
         val stringList: MutableList<String> = mutableListOf()
 
         cursor.use {
@@ -293,10 +288,145 @@ object Database
                     // Die Zeichenfülge "  - " vor dem {0} ist wichtig
                     // für das Erkennen der Unterkategorie bei Auswahl.
 
-                    stringList.add(String.format("  - %s", subCategoryName));
+                    stringList.add(String.format("  - %s", subCategoryName))
                 }
             }
         }
         return stringList
+    }
+
+    fun getManufacturerNames(): MutableList<String>
+    {
+        val query = """
+            SELECT DISTINCT Manufacturer
+            FROM Article
+            WHERE Manufacturer IS NOT NULL
+            AND Manufacturer <> ''
+            ORDER BY Manufacturer COLLATE NOCASE
+            """
+
+        val stringList = db.queryStringList(query.trimIndent(), null)
+
+        return stringList
+    }
+
+    fun getSubcategoriesOf(category: String? = null): MutableList<String> {
+        val parameter = mutableListOf<String>()
+
+        var query = """
+            SELECT DISTINCT SubCategory
+            FROM Article
+            WHERE SubCategory IS NOT NULL
+            AND SubCategory <> ''
+            """
+        if (category != null)
+        {
+            query += " AND Category = ?"
+            parameter.add(category)
+        }
+        query += " ORDER BY SubCategory COLLATE NOCASE"
+
+        val stringList = db.queryStringList(query.trimIndent(), parameter.toTypedArray())
+
+        return stringList
+    }
+
+    fun getSupermarketNames(shoppingListOnly: Boolean = false): MutableList<String>
+    {
+        var query = """
+            SELECT DISTINCT Supermarket
+            FROM Article """
+
+        if (shoppingListOnly)
+        {
+            query += " JOIN ShoppingList ON ShoppingList.ArticleId = Article.ArticleId"
+        }
+
+        query += """
+            WHERE Supermarket IS NOT NULL
+            AND Supermarket <> ''
+            ORDER BY Supermarket COLLATE NOCASE
+            """
+
+        val result = db.queryStringList(query.trimIndent(), null)
+
+        val stringList = mutableListOf<String>()
+        for (item in result)
+        {
+            val supermarketName = item
+
+            if (!shoppingListOnly) {
+                stringList.add(supermarketName)
+                continue
+            }
+
+            supermarketName.split(",")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() && !stringList.contains(it) }
+                .forEach { stringList.add(it) }
+        }
+        return result
+    }
+
+    fun getStorageNames(inStorageArticlesOnly: Boolean = false): MutableList<String>
+    {
+        var cmd = """
+            SELECT DISTINCT Article.StorageName
+            FROM Article
+            WHERE Article.StorageName IS NOT NULL AND Article.StorageName <> ''
+        """
+
+        if (inStorageArticlesOnly)
+        {
+            cmd += """
+                AND Article.ArticleId IN (
+                    SELECT StorageItem.ArticleId
+                    FROM StorageItem
+                    WHERE StorageItem.StorageName IS NULL OR StorageItem.StorageName = ''
+                )"""
+        }
+
+        cmd += """
+            UNION
+            SELECT StorageName AS Value
+            FROM StorageItem
+            WHERE StorageName IS NOT NULL AND StorageName <> ''
+            ORDER BY 1 COLLATE NOCASE
+        """
+
+        val stringList = db.queryStringList(cmd.trimIndent(), null)
+
+        return stringList
+    }
+
+
+    fun SQLiteDatabase.queryStringList(
+        query: String,
+        args: Array<String>? = null
+    ): MutableList<String> {
+        val result = mutableListOf<String>()
+        val cursor = this.rawQuery(query, args)
+        cursor.use {
+            //val colIndex = it.getColumnIndexOrThrow(columnName)
+            while (it.moveToNext()) {
+                result.add(it.getString(0))
+            }
+        }
+        return result
+    }
+
+    fun <T> SQLiteDatabase.queryList(
+        query: String,
+        args: Array<String>? = null,
+        mapper: (Cursor) -> T
+    ): List<T> {
+        val result = mutableListOf<T>()
+        val cursor = this.rawQuery(query, args)
+        cursor.use {
+            while (it.moveToNext()) {
+                result.add(mapper(it))
+            }
+        }
+        return result
     }
 }

@@ -124,6 +124,7 @@
                 android:layout_marginRight="10dp" />
             <Spinner
                 android:id="@+id/ArticleDetails_Category"
+                android:entries="@array/ArticleCatagories"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
