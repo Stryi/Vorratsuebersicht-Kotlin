@@ -351,4 +351,71 @@ object Database
         return result
     }
 
+    fun getStorageNames(inStorageArticlesOnly: Boolean = false): MutableList<String>
+    {
+        var query = """
+            SELECT DISTINCT Article.StorageName
+            FROM Article
+            WHERE Article.StorageName IS NOT NULL AND Article.StorageName <> ''
+        """
+
+        if (inStorageArticlesOnly)
+        {
+            query += """
+                AND Article.ArticleId IN (
+                    SELECT StorageItem.ArticleId
+                    FROM StorageItem
+                    WHERE StorageItem.StorageName IS NULL OR StorageItem.StorageName = ''
+                )"""
+        }
+
+        query += """
+            UNION
+            SELECT StorageName AS Value
+            FROM StorageItem
+            WHERE StorageName IS NOT NULL AND StorageName <> ''
+            ORDER BY 1 COLLATE NOCASE
+        """
+        val result = db.queryStringList(query.trimIndent(), null)
+
+        return result
+    }
+
+    fun getSupermarketNames(shoppingListOnly: Boolean = false): MutableList<String>
+    {
+        var query = """
+            SELECT DISTINCT Supermarket
+            FROM Article
+        """
+        if (shoppingListOnly)
+        {
+            query += " JOIN ShoppingList ON ShoppingList.ArticleId = Article.ArticleId"
+        }
+        query += """
+            WHERE Supermarket IS NOT NULL
+            AND Supermarket <> ''
+            ORDER BY Supermarket COLLATE NOCASE
+        """
+
+        var result = db.queryStringList(query.trimIndent(), null)
+
+        val stringList = mutableListOf<String>()
+
+        for (item in result) {
+            val supermarketName = item
+
+            if (!shoppingListOnly) {
+                stringList.add(supermarketName)
+                continue
+            }
+
+            supermarketName.split(",")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() && !stringList.contains(it) }
+                .forEach { stringList.add(it) }
+        }
+
+        return result
+    }
+
 }
