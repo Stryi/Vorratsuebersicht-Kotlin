@@ -1,6 +1,5 @@
 package de.stryi.vorratsuebersicht2.database
 
-import android.R
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import getDoubleOrNull
@@ -270,7 +269,7 @@ object Database
         """.trimIndent()
         val cursor = db.rawQuery(query, null)
 
-        var lastCategory: String = ""
+        var lastCategory = ""
         val stringList: MutableList<String> = mutableListOf()
 
         cursor.use {
@@ -293,10 +292,63 @@ object Database
                     // Die Zeichenfülge "  - " vor dem {0} ist wichtig
                     // für das Erkennen der Unterkategorie bei Auswahl.
 
-                    stringList.add(String.format("  - %s", subCategoryName));
+                    stringList.add(String.format("  - %s", subCategoryName))
                 }
             }
         }
         return stringList
     }
+
+    fun getManufacturerNames(): MutableList<String>
+    {
+        val query = """
+            SELECT DISTINCT Manufacturer
+            FROM Article
+            WHERE Manufacturer IS NOT NULL
+            AND Manufacturer <> ''
+            ORDER BY Manufacturer COLLATE NOCASE
+        """
+        val result = db.queryStringList(query.trimIndent(), null)
+
+        return result
+    }
+
+    fun SQLiteDatabase.queryStringList(
+        query: String,
+        args: Array<String>? = null
+    ): MutableList<String> {
+        val result = mutableListOf<String>()
+        val cursor = this.rawQuery(query, args)
+        cursor.use {
+            while (it.moveToNext()) {
+                result.add(it.getString(0))
+            }
+        }
+        return result
+    }
+
+    fun getSubcategoriesOf(category: String? = null): MutableList<String>
+    {
+        val parameters = mutableListOf<String>()
+
+        var query = """
+            SELECT DISTINCT SubCategory
+            FROM Article
+            WHERE SubCategory IS NOT NULL
+            AND SubCategory <> ''
+        """
+        if (category != null)
+        {
+            query += " AND Category = ?"
+            parameters.add(category)
+        }
+        query += " ORDER BY SubCategory COLLATE NOCASE"
+
+        val result = db.queryStringList(
+            query.trimIndent(),
+            parameters.toTypedArray())
+
+        return result
+    }
+
 }

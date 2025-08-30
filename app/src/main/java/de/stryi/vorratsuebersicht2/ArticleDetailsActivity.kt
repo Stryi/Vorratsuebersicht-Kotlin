@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
@@ -37,6 +38,59 @@ class ArticleDetailsActivity : AppCompatActivity() {
         binding.ArticleDetailsName.setText(article.name)
         binding.ArticleDetailsManufacturer.setText(article.manufacturer)
         binding.ArticleDetailsSubCategory.setText(article.subCategory)
+
+        // Hersteller Eingabe
+        val manufacturers = Database.getManufacturerNames()
+        val manufactureresAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, manufacturers)
+        binding.ArticleDetailsManufacturer.setAdapter(manufactureresAdapter)
+        binding.ArticleDetailsManufacturer.threshold = 1
+
+        binding.ArticleDetailsSelectManufacturer.setOnClickListener { this.selectManufacturer() }
+
+        // Unterkategorie Eingabe
+        val subCategories = Database.getSubcategoriesOf()
+        val subCategoriesAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, subCategories)
+        binding.ArticleDetailsSubCategory.setAdapter(subCategoriesAdapter)
+        binding.ArticleDetailsSubCategory.threshold = 1
+
+        binding.ArticleDetailsSelectSubCategory.setOnClickListener { this.selectSubCategory() }
+    }
+
+    private fun selectManufacturer()
+    {
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle(R.string.ArticleDetails_Manufacturer)
+        builder.setItems(Database.getManufacturerNames().toTypedArray()) { _, which ->
+            binding.ArticleDetailsManufacturer.setText(Database.getManufacturerNames()[which])
+        }
+        builder.show()
+    }
+
+    private fun selectSubCategory()
+    {
+        val category = binding.ArticleDetailsCategory.selectedItem.toString()
+
+        val subCategories = Database.getSubcategoriesOf(category)
+
+        if (!subCategories.isEmpty())
+        {
+            subCategories.add("")
+        }
+
+        for (subCategory in Database.getSubcategoriesOf())
+        {
+            if (!subCategories.contains(subCategory))
+            {
+                subCategories.add(subCategory)
+            }
+        }
+
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle(R.string.ArticleDetails_SubCategory)
+        builder.setItems(subCategories.toTypedArray()) { _, which ->
+            binding.ArticleDetailsSubCategory.setText(subCategories[which])
+        }
+        builder.show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,7 +141,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
             return false
         }
 
-        isChanged = true;
+        isChanged = true
 
         return true
     }
