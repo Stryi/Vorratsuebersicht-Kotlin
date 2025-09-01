@@ -1,9 +1,12 @@
 package de.stryi.vorratsuebersicht2
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,9 +14,12 @@ import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
 
+
 class ArticleDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ArticleDetailsBinding
+
+    //private lateinit val articleImage: ByteArray?
 
     private var isChanged: Boolean = false
 
@@ -34,10 +40,36 @@ class ArticleDetailsActivity : AppCompatActivity() {
             article = Article()
         }
 
-        binding.ArticleDetailsArticleId.text = article.articleId.toString()
+        var articleImage = Database.getArticleImage(articleId, false)
+
+        if (!articleImage.isEmpty())
+        {
+            val smallBitmap: Bitmap? = BitmapFactory.decodeByteArray(
+                articleImage,
+                0,
+                articleImage.size)
+
+            binding.ArticleDetailsImage.setImageBitmap(smallBitmap)
+            binding.ArticleDetailsImage2.visibility = View.GONE
+        }
+
+        binding.ArticleDetailsArticleId.text = "ArticleId: ${article.articleId}"
         binding.ArticleDetailsName.setText(article.name)
         binding.ArticleDetailsManufacturer.setText(article.manufacturer)
         binding.ArticleDetailsSubCategory.setText(article.subCategory)
+        binding.ArticleDetailsSupermarket.setText(article.supermarket)
+        binding.ArticleDetailsStorage.setText(article.storageName)
+        binding.ArticleDetailsDurableInfinity.isChecked = article.durableInfinity
+        binding.ArticleDetailsWarnInDays.setText(article.warnInDays.toString())
+        binding.ArticleDetailsPrice.setText(article.price.toString())
+        binding.ArticleDetailsSize.setText(article.size.toString())
+        binding.ArticleDetailsUnit.setText(article.unit)
+        binding.ArticleDetailsCalorie.setText(article.calorie.toString())
+        binding.ArticleDetailsMinQuantity.setText(article.minQuantity.toString())
+        binding.ArticleDetailsPrefQuantity.setText(article.prefQuantity.toString())
+        binding.ArticleDetailsEANCode.setText(article.eanCode)
+        binding.ArticleDetailsNotes.setText(article.notes)
+
 
         // Hersteller Eingabe
         val manufacturers = Database.getManufacturerNames()
@@ -46,6 +78,13 @@ class ArticleDetailsActivity : AppCompatActivity() {
         binding.ArticleDetailsManufacturer.threshold = 1
 
         binding.ArticleDetailsSelectManufacturer.setOnClickListener { this.selectManufacturer() }
+
+
+        // Fest definierte Kategorien
+        val defaultCategories = R.array.ArticleCatagories
+
+        val categoryAdapter = ArrayAdapter.createFromResource(this, defaultCategories, android.R.layout.simple_dropdown_item_1line)
+        binding.ArticleDetailsCategory.adapter = categoryAdapter
 
         // Unterkategorie Eingabe
         val subCategories = Database.getSubcategoriesOf()
@@ -175,6 +214,8 @@ class ArticleDetailsActivity : AppCompatActivity() {
             article.name = binding.ArticleDetailsName.text.toString()
             article.manufacturer = binding.ArticleDetailsManufacturer.text.toString()
             article.subCategory = binding.ArticleDetailsSubCategory.text.toString()
+            article.supermarket = binding.ArticleDetailsSupermarket.text.toString()
+            article.storageName = binding.ArticleDetailsStorage.text.toString()
 
             Database.updateArticle(article)
         }

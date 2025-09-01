@@ -186,7 +186,7 @@ object Database
         return result
     }
 
-    fun getArticleImage(articleId: Int? , showLarge: Boolean?  = null): ByteArray
+    fun getArticleImage(articleId: Int?, showLarge: Boolean?  = null): ByteArray
     {
         var cmd = "SELECT ImageId, ArticleId, Type"
         cmd += if (showLarge == null)
