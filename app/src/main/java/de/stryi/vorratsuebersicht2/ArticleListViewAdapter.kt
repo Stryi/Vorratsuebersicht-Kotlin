@@ -95,7 +95,7 @@ class ArticleListViewAdapter(private val articles: List<Article>,
             holder.image.alpha = 1.toFloat()
             holder.image.setOnClickListener {
                 val intent = Intent(holder.image.context, ArticleImageActivity::class.java)
-                intent.putExtra("articleId", article.articleId)
+                intent.putExtra("ArticleId", article.articleId)
                 holder.image.context.startActivity(intent)
             }
         }

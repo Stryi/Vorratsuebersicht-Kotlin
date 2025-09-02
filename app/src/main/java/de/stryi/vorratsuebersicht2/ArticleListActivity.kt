@@ -193,7 +193,7 @@ class ArticleListActivity : AppCompatActivity() {
         listViewState = binding.ArticleList.layoutManager?.onSaveInstanceState()
 
         val intent = Intent(this, ArticleDetailsActivity::class.java)
-        intent.putExtra("articleId", articleId)
+        intent.putExtra("ArticleId", articleId)
         detailLauncher.launch(intent)
     }
 

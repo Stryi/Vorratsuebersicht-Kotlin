@@ -23,7 +23,7 @@ class ArticleImageActivity : AppCompatActivity() {
         }
         */
 
-        val articleId = intent.getIntExtra("articleId", 0)
+        val articleId = intent.getIntExtra("ArticleId", 0)
 
         showPictureFromDatabase(articleId)
     }

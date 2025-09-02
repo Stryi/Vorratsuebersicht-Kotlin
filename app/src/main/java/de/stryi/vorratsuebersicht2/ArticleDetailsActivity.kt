@@ -3,25 +3,45 @@ package de.stryi.vorratsuebersicht2
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.provider.MediaStore
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
+import java.math.BigDecimal
 
 
 class ArticleDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ArticleDetailsBinding
 
-    //private lateinit val articleImage: ByteArray?
-
+    private lateinit var article: Article
+    private var articleId: Int = 0
     private var isChanged: Boolean = false
+    private var noStorageQuantity: Boolean = false
+    private var noDeleteArticle: Boolean = false
+
+    private val takePictureResultLauncher = registerForActivityResult(StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as Bitmap
+            binding.ArticleDetailsImage.setImageBitmap(imageBitmap)
+            // TODO: Save the image to the database or a file
+            // For now, just display it
+            binding.ArticleDetailsImage2.visibility = View.GONE
+            isPhotoSelected = true
+            invalidateOptionsMenu() // To update the menu items
+            isChanged = true
+        }
+    }
+
+    private var isPhotoSelected: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,14 +53,16 @@ class ArticleDetailsActivity : AppCompatActivity() {
 
         binding.ArticleDetailsAppBar.setNavigationOnClickListener { finish() }
 
-        val articleId = intent.getIntExtra("articleId", 0)
-        var article = Database.getArticle(articleId)
+        this.articleId = intent.getIntExtra("ArticleId", 0)
+        var article = Database.getArticle(this.articleId)
         if (article == null)
         {
             article = Article()
+            this.isPhotoSelected = false
         }
+        this.article = article
 
-        var articleImage = Database.getArticleImage(articleId, false)
+        val articleImage = Database.getArticleImage(articleId, false)
 
         if (!articleImage.isEmpty())
         {
@@ -53,23 +75,22 @@ class ArticleDetailsActivity : AppCompatActivity() {
             binding.ArticleDetailsImage2.visibility = View.GONE
         }
 
-        binding.ArticleDetailsArticleId.text = "ArticleId: ${article.articleId}"
-        binding.ArticleDetailsName.setText(article.name)
-        binding.ArticleDetailsManufacturer.setText(article.manufacturer)
-        binding.ArticleDetailsSubCategory.setText(article.subCategory)
-        binding.ArticleDetailsSupermarket.setText(article.supermarket)
-        binding.ArticleDetailsStorage.setText(article.storageName)
-        binding.ArticleDetailsDurableInfinity.isChecked = article.durableInfinity
-        binding.ArticleDetailsWarnInDays.setText(article.warnInDays.toString())
-        binding.ArticleDetailsPrice.setText(article.price.toString())
-        binding.ArticleDetailsSize.setText(article.size.toString())
-        binding.ArticleDetailsUnit.setText(article.unit)
-        binding.ArticleDetailsCalorie.setText(article.calorie.toString())
-        binding.ArticleDetailsMinQuantity.setText(article.minQuantity.toString())
-        binding.ArticleDetailsPrefQuantity.setText(article.prefQuantity.toString())
-        binding.ArticleDetailsEANCode.setText(article.eanCode)
-        binding.ArticleDetailsNotes.setText(article.notes)
-
+        binding.ArticleDetailsArticleId.text = "ArticleId: ${this.article.articleId}"
+        binding.ArticleDetailsName.setText(this.article.name)
+        binding.ArticleDetailsManufacturer.setText(this.article.manufacturer)
+        binding.ArticleDetailsSubCategory.setText(this.article.subCategory)
+        binding.ArticleDetailsSupermarket.setText(this.article.supermarket)
+        binding.ArticleDetailsStorage.setText(this.article.storageName)
+        binding.ArticleDetailsDurableInfinity.isChecked = this.article.durableInfinity
+        binding.ArticleDetailsWarnInDays.setText(this.article.warnInDays.toString())
+        binding.ArticleDetailsPrice.setText(this.article.price.toString())
+        binding.ArticleDetailsSize.setText(this.article.size.toString())
+        binding.ArticleDetailsUnit.setText(this.article.unit)
+        binding.ArticleDetailsCalorie.setText(this.article.calorie.toString())
+        binding.ArticleDetailsMinQuantity.setText(this.article.minQuantity.toString())
+        binding.ArticleDetailsPrefQuantity.setText(this.article.prefQuantity.toString())
+        binding.ArticleDetailsEANCode.setText(this.article.eanCode)
+        binding.ArticleDetailsNotes.setText(this.article.notes)
 
         // Hersteller Eingabe
         val manufacturers = Database.getManufacturerNames()
@@ -109,6 +130,9 @@ class ArticleDetailsActivity : AppCompatActivity() {
         binding.ArticleDetailsStorage.threshold = 1
 
         binding.ArticleDetailsSelectStorage.setOnClickListener { this.selectStorage() }
+
+        binding.ArticleDetailsImage.setOnClickListener { this.takeOrShowPhoto() }
+        binding.ArticleDetailsImage2.setOnClickListener { this.selectAPicture() }
     }
 
 
@@ -174,14 +198,59 @@ class ArticleDetailsActivity : AppCompatActivity() {
         builder.show()
     }
 
+    private fun takeOrShowPhoto()
+    {
+        if (!this.isPhotoSelected) {
+            this.takeAPhoto()
+            return
+        }
+
+        val articleImage = Intent(this, ArticleImageActivity::class.java)
+        articleImage.putExtra("ArticleId", this.articleId)
+        articleImage.putExtra("EditMode", true)
+        this.startActivity(articleImage)
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.article_details_menu, menu)
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean
+    {
+        val itemDelete = menu.findItem(R.id.ArticleDetailsMenu_Delete)
+        itemDelete.isVisible = this.article.articleId > 0
+
+        val itemShowPicture = menu.findItem(R.id.ArticleDetailsMenu_ShowPicture)
+        itemShowPicture.isEnabled = this.isPhotoSelected
+
+        val itemRemovePicture = menu.findItem(R.id.ArticleDetailsMenu_RemovePicture)
+        itemRemovePicture.isEnabled = this.isPhotoSelected
+
+        if (MainActivity.IsGooglePlayPreLaunchTestMode)
+        {
+            val itemEanScan = menu.findItem(R.id.ArticleDetailsMenu_ScanEAN)
+            itemEanScan.isEnabled = false
+        }
+
+        val eanCode = binding.ArticleDetailsEANCode.text.toString()
+
+        val itemInternetDB = menu.findItem(R.id.ArticleDetailsMenu_InternetDB)
+        itemInternetDB.isEnabled = eanCode.isNotEmpty()
+
+        menu.findItem(R.id.ArticleDetailsMenu_ToStorageQuantity).isVisible = !this.noStorageQuantity
+        menu.findItem(R.id.ArticleDetailsMenu_Delete).isVisible = !this.noDeleteArticle
+
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.ArticleDetailsMenu_Delete -> {
+                this.deleteArticle()
+                return  true
+            }
+
             R.id.ArticleDetailsMenu_Save -> {
                 if (!this.saveArticle())
                 {
@@ -190,12 +259,56 @@ class ArticleDetailsActivity : AppCompatActivity() {
                 this.finish()
                 return true
             }
+
             R.id.ArticleDetailsMenu_Cancel -> {
+                this.moveTaskToBack(false)
                 this.finish()
                 return true
             }
-            else -> return false
+
+            R.id.ArticleDetailsMenu_MakeAPhoto -> {
+                this.takeAPhoto()
+                return true
+            }
+
+            R.id.ArticleDetailsMenu_SelectAPicture -> {
+                this.selectAPicture()
+                return true
+            }
+
+            R.id.ArticleDetailsMenu_ShowPicture -> {
+                if (this.isPhotoSelected)
+                {
+                    val articleImage = Intent(this, ArticleImageActivity::class.java)
+                    articleImage.putExtra("ArticleId", this.articleId)
+                    articleImage.putExtra("EditMode", true)
+                    this.startActivity(articleImage)
+                }
+                return true
+            }
         }
+
+        return false
+    }
+
+    private fun searchEanCodeOnInternetDb() {
+        Toast.makeText(this, "TODO: Suche Artikel auf Open Food Facts", Toast.LENGTH_LONG).show()
+    }
+
+    private fun saveAndAddToShoppingList() {
+        Toast.makeText(this, "TODO: Artikel zum Einkaufswagen hinzufügen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun saveAndGoToStorageItem() {
+        Toast.makeText(this, "TODO: Artikel zum Lagerbestand hinzufügen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun goToStorageItem(articleId: Int) {
+        Toast.makeText(this, "TODO: Artikel zum Lagerbestand hinzufügen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun searchEANCode(eanCode: String) {
+        Toast.makeText(this, "TODO: Suche Artikel in der Artikel Tabelle", Toast.LENGTH_LONG).show()
     }
 
     override fun finish() {
@@ -207,7 +320,23 @@ class ArticleDetailsActivity : AppCompatActivity() {
         super.finish()
     }
 
-    fun saveArticle() : Boolean {
+    private fun selectAPicture() {
+        Toast.makeText(this, "TODO: Select picture", Toast.LENGTH_LONG).show()
+    }
+
+    private fun takeAPhoto() {
+        if (MainActivity.IsGooglePlayPreLaunchTestMode)
+        {
+            return
+        }
+
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            takePictureResultLauncher.launch(takePictureIntent)
+        }
+    }
+
+    private fun saveArticle() : Boolean {
         try {
             val article = Article()
             article.articleId = binding.ArticleDetailsArticleId.text.toString().toInt()
@@ -228,5 +357,49 @@ class ArticleDetailsActivity : AppCompatActivity() {
         isChanged = true
 
         return true
+    }
+
+    private fun deleteArticle()
+    {
+        Toast.makeText(this, "TODO: Artikel löschen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun addToShoppingListManually() {
+        Toast.makeText(this, "TODO: Artikel zum Einkaufswagen hinzufügen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun showPictureAndDetails() {
+        Toast.makeText(this, "TODO: Bild anzeigen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun ShowStoreQuantityInfo() {
+        Toast.makeText(this, "TODO: Lagerbestand anzeigen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun resizeBitmap() {
+        Toast.makeText(this, "TODO: Bild skalieren", Toast.LENGTH_LONG).show()
+    }
+
+    private fun loadAndResizeBitmap(fileName: String) {
+        Toast.makeText(this, "TODO: Bild laden", Toast.LENGTH_LONG).show()
+    }
+
+    private fun getIntegerFromEditText(resourceId: Int): Int? {
+        Toast.makeText(this, "TODO: Eingabe aus EditText lesen", Toast.LENGTH_LONG).show()
+
+        return null
+    }
+
+    private fun getDecimalFromEditText(resourceId: Int): BigDecimal? {
+        Toast.makeText(this, "TODO: Eingabe aus EditText lesen", Toast.LENGTH_LONG).show()
+        return null
+    }
+
+    private fun createProgressBar() {
+        Toast.makeText(this, "TODO: Fortschrittsbalken anzeigen", Toast.LENGTH_LONG).show()
+    }
+
+    private fun hideProgressBar() {
+        Toast.makeText(this, "TODO: Fortschrittsbalken ausblenden", Toast.LENGTH_LONG).show()
     }
 }
