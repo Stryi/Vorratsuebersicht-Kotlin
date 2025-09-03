@@ -3,6 +3,7 @@ package de.stryi.vorratsuebersicht2
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.provider.MediaStore
 import android.os.Bundle
 import android.view.Menu
@@ -10,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
@@ -28,17 +30,30 @@ class ArticleDetailsActivity : AppCompatActivity() {
     private var noStorageQuantity: Boolean = false
     private var noDeleteArticle: Boolean = false
 
-    private val takePictureResultLauncher = registerForActivityResult(StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val imageBitmap = result.data?.extras?.get("data") as Bitmap
-            binding.ArticleDetailsImage.setImageBitmap(imageBitmap)
-            // TODO: Save the image to the database or a file
-            // For now, just display it
-            binding.ArticleDetailsImage2.visibility = View.GONE
-            isPhotoSelected = true
-            invalidateOptionsMenu() // To update the menu items
-            isChanged = true
-        }
+    private val takePicturePreview = registerForActivityResult(ActivityResultContracts.TakePicturePreview())
+    { bitmap: Bitmap? ->
+        if (bitmap == null)
+            return@registerForActivityResult
+
+        binding.ArticleDetailsImage.setImageBitmap(bitmap)
+        binding.ArticleDetailsImage2.visibility = View.GONE
+        isPhotoSelected = true
+        isChanged = true
+        invalidateOptionsMenu() // To update the menu items
+    }
+
+    // Launcher für das Bild-Auswahl-Intent
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent())
+    { uri: Uri? ->
+        if (uri == null)
+            return@registerForActivityResult
+
+        // Hier hast du das ausgewählte Bild (z.B. in ImageView anzeigen)
+        binding.ArticleDetailsImage.setImageURI(uri)
+        binding.ArticleDetailsImage2.visibility = View.GONE
+        isPhotoSelected = true
+        isChanged = true
+        invalidateOptionsMenu() // To update the menu items
     }
 
     private var isPhotoSelected: Boolean = true
@@ -321,7 +336,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
     }
 
     private fun selectAPicture() {
-        Toast.makeText(this, "TODO: Select picture", Toast.LENGTH_LONG).show()
+        pickImageLauncher.launch("image/*")
     }
 
     private fun takeAPhoto() {
@@ -330,10 +345,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
             return
         }
 
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
-            takePictureResultLauncher.launch(takePictureIntent)
-        }
+        takePicturePreview.launch(null)
     }
 
     private fun saveArticle() : Boolean {
@@ -359,8 +371,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
         return true
     }
 
-    private fun deleteArticle()
-    {
+    private fun deleteArticle() {
         Toast.makeText(this, "TODO: Artikel löschen", Toast.LENGTH_LONG).show()
     }
 
