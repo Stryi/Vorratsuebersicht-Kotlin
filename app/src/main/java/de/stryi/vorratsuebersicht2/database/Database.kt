@@ -186,33 +186,33 @@ object Database
         return result
     }
 
-    fun getArticleImage(articleId: Int?, showLarge: Boolean?  = null): ByteArray
+    fun getArticleImage(articleId: Int?, showLarge: Boolean?  = null): ArticleImage?
     {
-        var cmd = "SELECT ImageId, ArticleId, Type"
-        cmd += if (showLarge == null)
-            ", ImageLarge, ImageSmall"
-        else {
-            if (showLarge)
-                ", ImageLarge"
+        var cmd = "SELECT ImageId, ArticleId, Type, CreatedAt,"
+        if (showLarge == null) {
+            cmd += " ImageLarge, ImageSmall"
+        }
+        else
+        {
+            if (showLarge == true)
+                cmd += "ImageLarge"
             else
-                ", ImageSmall"
+                cmd += "ImageSmall"
         }
 
         cmd += " FROM ArticleImage"
         cmd += " WHERE ArticleId = ?"
         cmd += " AND Type = 0"
 
-        val result = mutableListOf<ByteArray>()
+        var result: ArticleImage? = null
         val cursor = db.rawQuery(cmd, arrayOf(articleId.toString()))
         cursor.use {
             while (it.moveToNext()) {
-                result.add(it.getBlob(3))
+                result = ArticleImage.fromCursor(it)
             }
         }
-        if (result.isEmpty())
-            return ByteArray(0)
 
-        return result[0]
+        return result
     }
 
     fun updateArticle(article: Article)

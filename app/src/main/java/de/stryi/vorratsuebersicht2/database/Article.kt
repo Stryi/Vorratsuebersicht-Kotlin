@@ -32,23 +32,23 @@ class Article {
     companion object {
         fun fromCursor(cursor: Cursor): Article {
             val article = Article()
-            article.articleId = cursor.getIntOrNull("ArticleId") ?: 0
-            article.eanCode = cursor.getStringOrNull("EANCode")
-            article.name = cursor.getStringOrNull("Name")
+            article.articleId    = cursor.getIntOrNull("ArticleId") ?: 0
+            article.eanCode      = cursor.getStringOrNull("EANCode")
+            article.name         = cursor.getStringOrNull("Name")
             article.manufacturer = cursor.getStringOrNull("Manufacturer")
-            article.category = cursor.getStringOrNull("Category")
-            article.subCategory = cursor.getStringOrNull("SubCategory")
+            article.category     = cursor.getStringOrNull("Category")
+            article.subCategory  = cursor.getStringOrNull("SubCategory")
             article.durableInfinity = cursor.getIntOrNull("DurableInfinity") == 1
-            article.warnInDays = cursor.getIntOrNull("WarnInDays")
-            article.size = cursor.getDoubleOrNull("Size")
-            article.unit = cursor.getStringOrNull("Unit")
-            article.calorie = cursor.getIntOrNull("Calorie")
-            article.notes = cursor.getStringOrNull("Notes")
-            article.storageName = cursor.getStringOrNull("StorageName")
-            article.minQuantity = cursor.getIntOrNull("MinQuantity")
+            article.warnInDays   = cursor.getIntOrNull("WarnInDays")
+            article.size         = cursor.getDoubleOrNull("Size")
+            article.unit         = cursor.getStringOrNull("Unit")
+            article.calorie      = cursor.getIntOrNull("Calorie")
+            article.notes        = cursor.getStringOrNull("Notes")
+            article.storageName  = cursor.getStringOrNull("StorageName")
+            article.minQuantity  = cursor.getIntOrNull("MinQuantity")
             article.prefQuantity = cursor.getIntOrNull("PrefQuantity")
-            article.supermarket = cursor.getStringOrNull("Supermarket")
-            article.price = cursor.getDoubleOrNull("Price")
+            article.supermarket  = cursor.getStringOrNull("Supermarket")
+            article.price        = cursor.getDoubleOrNull("Price")
             return article
         }
     }

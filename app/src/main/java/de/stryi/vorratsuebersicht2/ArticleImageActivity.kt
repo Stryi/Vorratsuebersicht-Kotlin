@@ -28,8 +28,12 @@ class ArticleImageActivity : AppCompatActivity() {
 
     fun showPictureFromDatabase(articleId: Int)
     {
-        val byteArray = Database.getArticleImage(articleId)
-        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        val articleImage = Database.getArticleImage(articleId)
+        if (articleImage == null)
+        {
+            return
+        }
+        val bitmap = BitmapFactory.decodeByteArray(articleImage.imageLarge, 0, articleImage!!.imageLarge!!.size)
         val image: ImageView = findViewById(R.id.ArticleImage_Image)
         image.setImageBitmap(bitmap)
     }

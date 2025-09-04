@@ -13,9 +13,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
+import de.stryi.vorratsuebersicht2.database.ArticleImage
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
 import java.math.BigDecimal
+import java.util.Date
 
 
 class ArticleDetailsActivity : AppCompatActivity() {
@@ -28,6 +30,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
     }
 
     private lateinit var article: Article
+    private var articleImage: ArticleImage? = null
     private var articleId: Int = 0
     private var isChanged: Boolean = false
     private var noStorageQuantity: Boolean = false
@@ -71,14 +74,14 @@ class ArticleDetailsActivity : AppCompatActivity() {
         }
         this.article = article
 
-        val articleImage = Database.getArticleImage(articleId, false)
+        this.articleImage = Database.getArticleImage(articleId, false)
 
-        if (!articleImage.isEmpty())
+        if (this.articleImage != null)
         {
             val smallBitmap: Bitmap? = BitmapFactory.decodeByteArray(
-                articleImage,
+                articleImage!!.imageSmall,
                 0,
-                articleImage.size)
+                articleImage!!.imageSmall!!.size)
 
             binding.ArticleDetailsImage.setImageBitmap(smallBitmap)
             binding.ArticleDetailsImage2.visibility = View.GONE
@@ -378,6 +381,28 @@ class ArticleDetailsActivity : AppCompatActivity() {
             article.storageName = binding.ArticleDetailsStorage.text.toString()
 
             Database.updateArticle(article)
+
+            /*
+            if (this.articleImage!!.imageLarge != null)   // Ein neues Bild wurde ausgewählt oder vorhandenes geändert.
+            {
+                if (this.articleImage!!.imageId > 0)
+                {
+                    Database.Update(this.articleImage)
+                }
+                else
+                {
+                    this.articleImage!!.articleId = this.articleId
+                    this.articleImage!!.type = 0
+                    this.articleImage!!.createdAt = Date()
+                    Database.Insert(this.articleImage)
+                }
+            }
+
+            if ((this.articleImage!!.imageSmall == null) && (this.articleImage!!.imageId > 0))  // Vorhandenes Bild gelöscht?
+            {
+                Database.Delete(this.articleImage);
+            }
+            */
         }
         catch (ex: Exception)
         {

@@ -80,9 +80,9 @@ class ArticleListViewAdapter(private val articles: List<Article>,
             showContextMenu(holder, articleId)
         }
 
-        val byteArray = Database.getArticleImage(article.articleId, false)
+        val articleImage = Database.getArticleImage(article.articleId, false)
 
-        if (byteArray.isEmpty())
+        if (articleImage == null)
         {
             holder.image.setImageResource(R.drawable.photo_camera_24px)
             holder.image.alpha = 0.2.toFloat()
@@ -90,7 +90,7 @@ class ArticleListViewAdapter(private val articles: List<Article>,
         }
         else
         {
-            val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+            val bitmap = BitmapFactory.decodeByteArray(articleImage.imageSmall, 0, articleImage.imageSmall!!.size)
             holder.image.setImageBitmap(bitmap)
             holder.image.alpha = 1.toFloat()
             holder.image.setOnClickListener {
