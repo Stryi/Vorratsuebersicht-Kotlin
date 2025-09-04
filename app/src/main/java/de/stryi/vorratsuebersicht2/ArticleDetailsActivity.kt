@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.provider.MediaStore
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,7 +11,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.Database
@@ -23,6 +21,11 @@ import java.math.BigDecimal
 class ArticleDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ArticleDetailsBinding
+
+    companion object {
+        var imageLarge: Bitmap? = null
+        var imageSmall: Bitmap? = null
+    }
 
     private lateinit var article: Article
     private var articleId: Int = 0
@@ -35,11 +38,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
         if (bitmap == null)
             return@registerForActivityResult
 
-        binding.ArticleDetailsImage.setImageBitmap(bitmap)
-        binding.ArticleDetailsImage2.visibility = View.GONE
-        isPhotoSelected = true
-        isChanged = true
-        invalidateOptionsMenu() // To update the menu items
+        this.resizeBitmap(bitmap)
     }
 
     // Launcher für das Bild-Auswahl-Intent
@@ -48,12 +47,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
         if (uri == null)
             return@registerForActivityResult
 
-        // Hier hast du das ausgewählte Bild (z.B. in ImageView anzeigen)
-        binding.ArticleDetailsImage.setImageURI(uri)
-        binding.ArticleDetailsImage2.visibility = View.GONE
-        isPhotoSelected = true
-        isChanged = true
-        invalidateOptionsMenu() // To update the menu items
+        this.loadAndResizeBitmap(uri)
     }
 
     private var isPhotoSelected: Boolean = true
@@ -61,7 +55,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ArticleDetailsBinding.inflate(layoutInflater)
+        this.binding = ArticleDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         this.setSupportActionBar(binding.ArticleDetailsAppBar)
@@ -301,6 +295,25 @@ class ArticleDetailsActivity : AppCompatActivity() {
                 }
                 return true
             }
+
+            R.id.ArticleDetailsMenu_RemovePicture -> {
+                if (this.isPhotoSelected)
+                {
+                    // Erstelltes oder ausgewähltes Bild entfernen
+                    ArticleDetailsActivity.imageLarge = null
+                    ArticleDetailsActivity.imageSmall = null
+
+                    //this.articleImage.ImageLarge = null    // Änderungen verwerfen
+                    //this.articleImage.ImageSmall = null    // Gespeichertes Bild auch löschen
+
+                    binding.ArticleDetailsImage.setImageResource(R.drawable.photo_camera_24px)
+                    binding.ArticleDetailsImage2.setImageResource(R.drawable.photo_24px)
+                    binding.ArticleDetailsImage2.visibility = View.VISIBLE
+
+                    this.isPhotoSelected = false
+                    this.isChanged = true
+                }
+            }
         }
 
         return false
@@ -332,6 +345,12 @@ class ArticleDetailsActivity : AppCompatActivity() {
             returnIntent.putExtra("result", "Mein Wert")
             setResult(RESULT_OK, returnIntent)
         }
+
+        //this.article = null
+        ArticleDetailsActivity.imageLarge = null
+        ArticleDetailsActivity.imageSmall = null
+        // TODO InternetDatabaseSearchActivity.picture = null
+
         super.finish()
     }
 
@@ -387,12 +406,65 @@ class ArticleDetailsActivity : AppCompatActivity() {
         Toast.makeText(this, "TODO: Lagerbestand anzeigen", Toast.LENGTH_LONG).show()
     }
 
-    private fun resizeBitmap() {
-        Toast.makeText(this, "TODO: Bild skalieren", Toast.LENGTH_LONG).show()
+    private fun resizeBitmap(newBitmap: Bitmap)
+    {
+        var widthLarge = 854
+        var heightLarge = 854
+
+        var largeBitmap = newBitmap
+
+        val compress = true // TODO: Settings.GetBoolean("CompressPictures", true);
+        if (compress)
+        {
+            val compressMode = 4 // TODO: Settings.GetInt("CompressPicturesMode", 1);
+            if (compressMode == 2)
+            {
+                widthLarge  = 1_024
+                heightLarge = 1_024
+            }
+
+            if (compressMode == 3)
+            {
+                widthLarge  = 1_280
+                heightLarge = 1_280
+            }
+
+            if (compressMode == 4)
+            {
+                widthLarge  = 1_536
+                heightLarge = 1_536
+            }
+
+            widthLarge = Math.min (newBitmap.width,  widthLarge)
+            heightLarge = Math.min(newBitmap.height, heightLarge)
+
+            largeBitmap = Bitmap.createScaledBitmap(newBitmap, widthLarge, heightLarge, true)
+        }
+
+        ArticleDetailsActivity.imageLarge = largeBitmap
+
+        // --------------------------------------------------------------------------------
+        // Miniaturansicht erstellen
+        // --------------------------------------------------------------------------------
+
+        var smallBitmap = Bitmap.createScaledBitmap(newBitmap, 48*2, 85*2, true)
+        ArticleDetailsActivity.imageSmall = smallBitmap
+
+        binding.ArticleDetailsImage.setImageBitmap(largeBitmap)
+        binding.ArticleDetailsImage2.visibility = View.GONE
+
+        isPhotoSelected = true
+        isChanged = true
+
+        invalidateOptionsMenu() // To update the menu items
     }
 
-    private fun loadAndResizeBitmap(fileName: String) {
-        Toast.makeText(this, "TODO: Bild laden", Toast.LENGTH_LONG).show()
+    private fun loadAndResizeBitmap(uri: Uri) {
+        val inputStream = contentResolver.openInputStream(uri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        this.resizeBitmap(bitmap)
     }
 
     private fun getIntegerFromEditText(resourceId: Int): Int? {
