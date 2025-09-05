@@ -95,17 +95,15 @@ class Article {
             }
 
             // Preis
-            info.append("Preis:")
             if (price != null) {
                 val priceText = "%.2f".format(price)
+                info.append("Preis: ")
                 info.append(" $priceText")
 
                 val pricePerUnit = PricePerUnit.calculate(price, size, unit)
                 if (pricePerUnit.isNotBlank()) {
                     info.append(" ($pricePerUnit)")
                 }
-            } else {
-                info.append(" -")
             }
 
             // Größe
@@ -116,10 +114,10 @@ class Article {
             }
 
             // Kalorien
-            info.appendLine()
-            info.append("Kalorien:")
             if (calorie != null) {
                 val calorieText = "%.0f".format(calorie?.toDouble() ?: 0.0)
+                info.appendLine()
+                info.append("Kalorien:")
                 info.append(" $calorieText")
 
                 if (calorie != 0) {
@@ -133,8 +131,6 @@ class Article {
                         info.append(" (100 $unitPerX = $calPerUnit)")
                     }
                 }
-            } else {
-                info.append(" -")
             }
             return info.toString().trimEnd()
         }

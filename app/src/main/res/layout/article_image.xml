@@ -6,6 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/ArticleImage_AppBar"
+        app:titleTextColor="@color/Application_ActionBar_TextColor"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_bar_height"
+        android:background="@color/Application_ActionBar_Background"
+        app:navigationIconTint="@color/Application_ActionBar_TextColor"
+        app:navigationIcon="@drawable/arrow_back_24px"
+        app:iconTint="@color/Application_ActionBar_TextColor"
+        app:menu="@menu/article_image_menu"  />
+
     <ProgressBar
         android:id="@+id/ArticleImage_ProgressBar"
         style="?android:attr/progressBarStyleHorizontal"
