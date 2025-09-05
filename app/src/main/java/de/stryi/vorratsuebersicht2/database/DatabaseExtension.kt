@@ -48,6 +48,6 @@ fun Cursor.getBlobOrNull(columnName: String): ByteArray?
 fun Cursor.getColumnIndexOrNull(columnName: String): Int? =
     try {
         getColumnIndexOrThrow(columnName)
-    } catch (e: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         null
     }

@@ -16,6 +16,7 @@ import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.ArticleImage
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
+import java.io.ByteArrayOutputStream
 import java.math.BigDecimal
 import java.util.Date
 
@@ -25,12 +26,12 @@ class ArticleDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ArticleDetailsBinding
 
     companion object {
-        var imageLarge: Bitmap? = null
-        var imageSmall: Bitmap? = null
+        var imageLarge: ByteArray? = null
+        var imageSmall: ByteArray? = null
     }
 
     private lateinit var article: Article
-    private var articleImage: ArticleImage? = null
+    private lateinit var articleImage: ArticleImage
     private var articleId: Int = 0
     private var isChanged: Boolean = false
     private var noStorageQuantity: Boolean = false
@@ -66,22 +67,28 @@ class ArticleDetailsActivity : AppCompatActivity() {
         binding.ArticleDetailsAppBar.setNavigationOnClickListener { finish() }
 
         this.articleId = intent.getIntExtra("ArticleId", 0)
+
         var article = Database.getArticle(this.articleId)
         if (article == null)
         {
             article = Article()
-            this.isPhotoSelected = false
         }
         this.article = article
 
-        this.articleImage = Database.getArticleImage(articleId, false)
+        var articleImage = Database.getArticleImage(articleId, false)
+        if (articleImage == null)
+        {
+            articleImage = ArticleImage()
+        }
+        this.articleImage = articleImage
 
-        if (this.articleImage != null)
+        // ShowPictureAndDetails
+        if (this.articleImage.imageSmall != null)
         {
             val smallBitmap: Bitmap? = BitmapFactory.decodeByteArray(
-                articleImage!!.imageSmall,
+                articleImage.imageSmall,
                 0,
-                articleImage!!.imageSmall!!.size)
+                articleImage.imageSmall!!.size)
 
             binding.ArticleDetailsImage.setImageBitmap(smallBitmap)
             binding.ArticleDetailsImage2.visibility = View.GONE
@@ -306,8 +313,8 @@ class ArticleDetailsActivity : AppCompatActivity() {
                     ArticleDetailsActivity.imageLarge = null
                     ArticleDetailsActivity.imageSmall = null
 
-                    //this.articleImage.ImageLarge = null    // Änderungen verwerfen
-                    //this.articleImage.ImageSmall = null    // Gespeichertes Bild auch löschen
+                    this.articleImage.imageLarge = null    // Änderungen verwerfen
+                    this.articleImage.imageSmall = null    // Gespeichertes Bild auch löschen
 
                     binding.ArticleDetailsImage.setImageResource(R.drawable.photo_camera_24px)
                     binding.ArticleDetailsImage2.setImageResource(R.drawable.photo_24px)
@@ -372,37 +379,49 @@ class ArticleDetailsActivity : AppCompatActivity() {
 
     private fun saveArticle() : Boolean {
         try {
-            val article = Article()
-            article.articleId = binding.ArticleDetailsArticleId.text.toString().toInt()
-            article.name = binding.ArticleDetailsName.text.toString()
-            article.manufacturer = binding.ArticleDetailsManufacturer.text.toString()
-            article.subCategory = binding.ArticleDetailsSubCategory.text.toString()
-            article.supermarket = binding.ArticleDetailsSupermarket.text.toString()
-            article.storageName = binding.ArticleDetailsStorage.text.toString()
+            //val article = Article()
+            this.article.name = binding.ArticleDetailsName.text.toString()
+            this.article.manufacturer = binding.ArticleDetailsManufacturer.text.toString()
+            this.article.subCategory = binding.ArticleDetailsSubCategory.text.toString()
+            this.article.supermarket = binding.ArticleDetailsSupermarket.text.toString()
+            this.article.storageName = binding.ArticleDetailsStorage.text.toString()
 
-            Database.updateArticle(article)
 
-            /*
-            if (this.articleImage!!.imageLarge != null)   // Ein neues Bild wurde ausgewählt oder vorhandenes geändert.
+            if (this.article.articleId > 0)
             {
-                if (this.articleImage!!.imageId > 0)
+                Database.updateArticle(this.article)
+            }
+            else
+            {
+                var newId = Database.insertArtice(this.article)
+                this.articleId = newId.toInt()
+            }
+
+            if (ArticleDetailsActivity.imageLarge != null)
+                this.articleImage.imageLarge = ArticleDetailsActivity.imageLarge
+
+            if (ArticleDetailsActivity.imageSmall != null)
+                this.articleImage.imageSmall = ArticleDetailsActivity.imageSmall
+
+            if (this.articleImage.imageLarge != null)   // Ein neues Bild wurde ausgewählt oder vorhandenes geändert.
+            {
+                if (this.articleImage.imageId > 0)
                 {
-                    Database.Update(this.articleImage)
+                    Database.updateArticleImage(this.articleImage)
                 }
                 else
                 {
-                    this.articleImage!!.articleId = this.articleId
-                    this.articleImage!!.type = 0
-                    this.articleImage!!.createdAt = Date()
-                    Database.Insert(this.articleImage)
+                    this.articleImage.articleId = this.articleId
+                    this.articleImage.type = 0
+                    this.articleImage.createdAt = Date()
+                    Database.insertArticleImage(this.articleImage)
                 }
             }
 
-            if ((this.articleImage!!.imageSmall == null) && (this.articleImage!!.imageId > 0))  // Vorhandenes Bild gelöscht?
+            if ((this.articleImage.imageSmall == null) && (this.articleImage.imageId > 0))  // Vorhandenes Bild gelöscht?
             {
-                Database.Delete(this.articleImage);
+                Database.deleteArticleImage(this.articleImage)
             }
-            */
         }
         catch (ex: Exception)
         {
@@ -466,14 +485,18 @@ class ArticleDetailsActivity : AppCompatActivity() {
             largeBitmap = Bitmap.createScaledBitmap(newBitmap, widthLarge, heightLarge, true)
         }
 
-        ArticleDetailsActivity.imageLarge = largeBitmap
+        val stream = ByteArrayOutputStream()
+        largeBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        ArticleDetailsActivity.imageLarge = stream.toByteArray()
 
         // --------------------------------------------------------------------------------
         // Miniaturansicht erstellen
         // --------------------------------------------------------------------------------
 
         var smallBitmap = Bitmap.createScaledBitmap(newBitmap, 48*2, 85*2, true)
-        ArticleDetailsActivity.imageSmall = smallBitmap
+
+        smallBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        ArticleDetailsActivity.imageSmall = stream.toByteArray()
 
         binding.ArticleDetailsImage.setImageBitmap(largeBitmap)
         binding.ArticleDetailsImage2.visibility = View.GONE

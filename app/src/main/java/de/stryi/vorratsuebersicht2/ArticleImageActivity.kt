@@ -33,7 +33,7 @@ class ArticleImageActivity : AppCompatActivity() {
         {
             return
         }
-        val bitmap = BitmapFactory.decodeByteArray(articleImage.imageLarge, 0, articleImage!!.imageLarge!!.size)
+        val bitmap = BitmapFactory.decodeByteArray(articleImage.imageLarge, 0, articleImage.imageLarge!!.size)
         val image: ImageView = findViewById(R.id.ArticleImage_Image)
         image.setImageBitmap(bitmap)
     }
@@ -41,7 +41,13 @@ class ArticleImageActivity : AppCompatActivity() {
     fun showPictureFromBitmap()
     {
         val image: ImageView = findViewById(R.id.ArticleImage_Image)
-        image.setImageBitmap(ArticleDetailsActivity.imageLarge)
 
+        val largeBitmap = BitmapFactory.decodeByteArray(
+            ArticleDetailsActivity.imageLarge,
+            0,
+            ArticleDetailsActivity.imageLarge!!.size
+        )
+
+        image.setImageBitmap(largeBitmap)
     }
 }

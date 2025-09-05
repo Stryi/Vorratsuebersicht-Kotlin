@@ -1,5 +1,6 @@
 package de.stryi.vorratsuebersicht2.database
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import getDoubleOrNull
@@ -12,6 +13,77 @@ object Database
     fun init(context: Context, fileName: String) {
         val dbFile = context.getDatabasePath(fileName)
         db = SQLiteDatabase.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READWRITE)
+    }
+
+    fun insertArtice(article: Article): Long {
+
+        val values = ContentValues()
+        values.put("Name",            article.name)
+        values.put("Manufacturer",    article.manufacturer)
+        values.put("Category",        article.category)
+        values.put("SubCategory",     article.subCategory)
+        values.put("DurableInfinity", article.durableInfinity)
+        values.put("WarnInDays",      article.warnInDays)
+        values.put("Size",            article.size)
+        values.put("Unit",            article.unit)
+        values.put("Notes",           article.notes)
+        values.put("EANCode",         article.eanCode)
+        values.put("Calorie",         article.calorie)
+        values.put("Price",           article.price)
+        values.put("StorageName",     article.storageName)
+        values.put("Supermarket",     article.supermarket)
+
+        val newId = db.insert("Article", null, values)
+
+        return newId
+
+        /*
+        val query = """
+            INSERT INTO Article (Name, Manufacturer, Category, SubCategory, DurableInfinity, WarnInDays,
+                Size, Unit, Notes, EANCode, Calorie, Price, StorageName, Supermarket)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """.trimIndent()
+        db.execSQL(query, arrayOf(article.name, article.manufacturer, article.category, article.subCategory,
+            article.durableInfinity, article.warnInDays, article.size, article.unit, article.notes, article.eanCode,
+            article.calorie, article.price, article.storageName, article.supermarket))
+        */
+    }
+
+    fun updateArticle(article: Article)
+    {
+        val query = """
+            UPDATE Article
+            SET Name = ?, Manufacturer = ?, Category = ?, SubCategory = ?, DurableInfinity = ?, WarnInDays = ?,
+                Size = ?, Unit = ?, Notes = ?, EANCode = ?, Calorie = ?, Price = ?, StorageName = ?, Supermarket = ?
+            WHERE ArticleId = ?
+        """.trimIndent()
+        db.execSQL(query, arrayOf(article.name, article.manufacturer, article.category, article.subCategory,
+            article.durableInfinity, article.warnInDays, article.size, article.unit, article.notes, article.eanCode,
+            article.calorie, article.price, article.storageName, article.supermarket, article.articleId))
+    }
+
+
+    fun deleteArticle(articleId: Int) {
+        val query = """
+            DELETE FROM Article
+            WHERE ArticleId = ?
+        """.trimIndent()
+        db.execSQL(query, arrayOf(articleId.toString()))
+    }
+
+    fun getArticle(articleId: Int): Article? {
+        val query = """
+            SELECT *
+            FROM Article
+            WHERE ArticleId = ?
+            """.trimIndent()
+        val cursor = db.rawQuery(query, arrayOf(articleId.toString()))
+        cursor.use {
+            if (it.moveToFirst()) {
+                return Article.fromCursor(it)
+            }
+        }
+        return null
     }
 
     fun getArticleList(
@@ -157,20 +229,6 @@ object Database
         return result
     }
 
-    fun getArticle(articleId: Int): Article? {
-        val query = """
-            SELECT *
-            FROM Article
-            WHERE ArticleId = ?
-            """.trimIndent()
-        val cursor = db.rawQuery(query, arrayOf(articleId.toString()))
-        cursor.use {
-            if (it.moveToFirst()) {
-                return Article.fromCursor(it)
-            }
-        }
-        return null
-    }
 
     fun getArticlesByEanCode(eanCode: String): List<String>
     {
@@ -184,48 +242,6 @@ object Database
             }
         }
         return result
-    }
-
-    fun getArticleImage(articleId: Int?, showLarge: Boolean?  = null): ArticleImage?
-    {
-        var cmd = "SELECT ImageId, ArticleId, Type, CreatedAt,"
-        if (showLarge == null) {
-            cmd += " ImageLarge, ImageSmall"
-        }
-        else
-        {
-            if (showLarge == true)
-                cmd += "ImageLarge"
-            else
-                cmd += "ImageSmall"
-        }
-
-        cmd += " FROM ArticleImage"
-        cmd += " WHERE ArticleId = ?"
-        cmd += " AND Type = 0"
-
-        var result: ArticleImage? = null
-        val cursor = db.rawQuery(cmd, arrayOf(articleId.toString()))
-        cursor.use {
-            while (it.moveToNext()) {
-                result = ArticleImage.fromCursor(it)
-            }
-        }
-
-        return result
-    }
-
-    fun updateArticle(article: Article)
-    {
-        val query = """
-            UPDATE Article
-            SET Name = ?, Manufacturer = ?, Category = ?, SubCategory = ?, DurableInfinity = ?, WarnInDays = ?,
-                Size = ?, Unit = ?, Notes = ?, EANCode = ?, Calorie = ?, Price = ?, StorageName = ?, Supermarket = ?
-            WHERE ArticleId = ?
-        """.trimIndent()
-        db.execSQL(query, arrayOf(article.name, article.manufacturer, article.category, article.subCategory,
-            article.durableInfinity, article.warnInDays, article.size, article.unit, article.notes, article.eanCode,
-            article.calorie, article.price, article.storageName, article.supermarket, article.articleId))
     }
 
     fun getShoppingListQuantiy(articleId: Int, notFoundDefault: Double?): Double?
@@ -417,5 +433,61 @@ object Database
 
         return result
     }
+
+    fun insertArticleImage(articleImage: ArticleImage) {
+        val query = """
+            INSERT INTO ArticleImage (ArticleId, Type, CreatedAt, ImageLarge, ImageSmall)
+            VALUES (?, ?, ?, ?, ?)
+        """.trimIndent()
+        db.execSQL(query, arrayOf(articleImage.articleId, articleImage.type, articleImage.createdAt,
+            articleImage.imageLarge, articleImage.imageSmall))
+    }
+
+    fun updateArticleImage(articleImage: ArticleImage) {
+        val query = """
+            UPDATE ArticleImage
+            SET ImageLarge = ?, ImageSmall = ?
+            WHERE ImageId = ?
+        """.trimIndent()
+        db.execSQL(query, arrayOf(articleImage.imageLarge, articleImage.imageSmall, articleImage.imageId))
+    }
+
+    fun deleteArticleImage(articleImage: ArticleImage) {
+        val query = """
+            DELETE FROM ArticleImage
+            WHERE ImageId = ?
+        """.trimIndent()
+        db.execSQL(query, arrayOf(articleImage.imageId))
+    }
+
+    fun getArticleImage(articleId: Int?, showLarge: Boolean?  = null): ArticleImage?
+    {
+        var cmd = "SELECT ImageId, ArticleId, Type, CreatedAt"
+        if (showLarge == null) {
+            cmd += ", ImageLarge, ImageSmall"
+        }
+        else
+        {
+            if (showLarge == true)
+                cmd += ", ImageLarge"
+            else
+                cmd += ", ImageSmall"
+        }
+
+        cmd += " FROM ArticleImage"
+        cmd += " WHERE ArticleId = ?"
+        cmd += " AND Type = 0"
+
+        var result: ArticleImage? = null
+        val cursor = db.rawQuery(cmd, arrayOf(articleId.toString()))
+        cursor.use {
+            while (it.moveToNext()) {
+                result = ArticleImage.fromCursor(it)
+            }
+        }
+
+        return result
+    }
+
 
 }
