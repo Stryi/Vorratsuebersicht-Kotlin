@@ -85,6 +85,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
         if (article == null)
         {
             article = Article()
+            this.isPhotoSelected = false
         }
         this.article = article
 
@@ -402,6 +403,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
             this.article.supermarket = binding.ArticleDetailsSupermarket.text.toString()
             this.article.storageName = binding.ArticleDetailsStorage.text.toString()
 
+            Database.updateArticle(article)
 
             if (this.article.articleId > 0)
             {
@@ -438,6 +440,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
             {
                 Database.deleteArticleImage(this.articleImage)
             }
+            */
         }
         catch (ex: Exception)
         {
