@@ -115,9 +115,6 @@ class ArticleImageActivity : AppCompatActivity() {
 
     private fun saveBitmap()
     {
-        // Bild drehen
-        //val rotatedBitmap = this.rotatedBitmap.rotate(90f)
-
         // Großes Bild als PNG-Bytearray speichern
         ArticleDetailsActivity.imageLarge = rotatedBitmap.toPngByteArray()
 
