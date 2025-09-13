@@ -1,6 +1,5 @@
 package de.stryi.vorratsuebersicht2.database
 
-import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import getDoubleOrNull
@@ -233,6 +232,20 @@ object Database
         return result
     }
 
+    fun getArticle(articleId: Int): Article? {
+        val query = """
+            SELECT *
+            FROM Article
+            WHERE ArticleId = ?
+            """.trimIndent()
+        val cursor = db.rawQuery(query, arrayOf(articleId.toString()))
+        cursor.use {
+            if (it.moveToFirst()) {
+                return Article.fromCursor(it)
+            }
+        }
+        return null
+    }
 
     fun getArticlesByEanCode(eanCode: String): List<String>
     {
@@ -246,6 +259,48 @@ object Database
             }
         }
         return result
+    }
+
+    fun getArticleImage(articleId: Int?, showLarge: Boolean?  = null): ArticleImage?
+    {
+        var cmd = "SELECT ImageId, ArticleId, Type, CreatedAt,"
+        if (showLarge == null) {
+            cmd += " ImageLarge, ImageSmall"
+        }
+        else
+        {
+            if (showLarge == true)
+                cmd += "ImageLarge"
+            else
+                cmd += "ImageSmall"
+        }
+
+        cmd += " FROM ArticleImage"
+        cmd += " WHERE ArticleId = ?"
+        cmd += " AND Type = 0"
+
+        var result: ArticleImage? = null
+        val cursor = db.rawQuery(cmd, arrayOf(articleId.toString()))
+        cursor.use {
+            while (it.moveToNext()) {
+                result = ArticleImage.fromCursor(it)
+            }
+        }
+
+        return result
+    }
+
+    fun updateArticle(article: Article)
+    {
+        val query = """
+            UPDATE Article
+            SET Name = ?, Manufacturer = ?, Category = ?, SubCategory = ?, DurableInfinity = ?, WarnInDays = ?,
+                Size = ?, Unit = ?, Notes = ?, EANCode = ?, Calorie = ?, Price = ?, StorageName = ?, Supermarket = ?
+            WHERE ArticleId = ?
+        """.trimIndent()
+        db.execSQL(query, arrayOf(article.name, article.manufacturer, article.category, article.subCategory,
+            article.durableInfinity, article.warnInDays, article.size, article.unit, article.notes, article.eanCode,
+            article.calorie, article.price, article.storageName, article.supermarket, article.articleId))
     }
 
     fun getShoppingListQuantiy(articleId: Int, notFoundDefault: Double?): Double?
