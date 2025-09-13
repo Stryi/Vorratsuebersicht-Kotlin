@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleImageBinding
 import de.stryi.vorratsuebersicht2.tools.Tools
+import de.stryi.vorratsuebersicht2.tools.imageResizer
 import resize
-import rotate
 import toPngByteArray
 import java.util.Locale
 
@@ -40,13 +40,20 @@ class ArticleImageActivity : AppCompatActivity() {
 
         this.articleId = intent.getIntExtra("ArticleId", 0)
         this.editMode  = intent.getBooleanExtra("EditMode", false)
-        val text = Database.getArticleName(this.articleId)
+
+        if (intent.hasExtra("Title"))
+        {
+            this.title = intent.getStringExtra("Title")
+        }
+        else
+        {
+            this.title = Database.getArticleName(this.articleId)
+        }
 
         binding.ArticleImageAppBar.setNavigationOnClickListener { finish() }
         binding.ArticleImageAppBar.setOnMenuItemClickListener { this.onOptionsItemSelected(it) }
-        binding.ArticleImageImage.setOnClickListener({ this.showImageInformation() })
-
-        this.actionBar?.title = text
+        binding.ArticleImageImage.setOnClickListener   ({ this.showImageInformation() })
+        binding.ArticleImageImageThn.setOnClickListener({ this.showImageInformation() })
 
         if (ArticleDetailsActivity.imageLarge != null)
         {
@@ -54,7 +61,7 @@ class ArticleImageActivity : AppCompatActivity() {
         }
         else
         {
-            this.showPictureFromDatabase(articleId)
+            this.showPictureFromDatabase()
         }
     }
 
@@ -115,10 +122,14 @@ class ArticleImageActivity : AppCompatActivity() {
         ArticleDetailsActivity.imageLarge = rotatedBitmap.toPngByteArray()
 
         // Verkleinertes Bild (Thumbnail) erstellen
-        val smallBitmap = rotatedBitmap.resize(48 * 2, 85 * 2)
+        val smallBitmap = imageResizer.resizeImageAndroid(
+            rotatedBitmap,
+            (48 * 2).toFloat(),
+            (85 * 2).toFloat())
+        //val smallBitmap = rotatedBitmap.resize(48 * 2, 85 * 2)
 
         // Thumbnail als PNG-Bytearray speichern
-        ArticleDetailsActivity.imageSmall = smallBitmap.toPngByteArray()
+        ArticleDetailsActivity.imageSmall = smallBitmap
 
         val intent = Intent()
         this.setResult(RESULT_OK, intent)
@@ -127,9 +138,9 @@ class ArticleImageActivity : AppCompatActivity() {
         this.isChanged = false
     }
 
-    fun showPictureFromDatabase(articleId: Int)
+    fun showPictureFromDatabase()
     {
-        val article= Database.getArticleImage(articleId)
+        val article= Database.getArticleImage(this.articleId)
 
         this.showPictureFromByteArray(article?.imageLarge, article?.imageSmall)
     }
@@ -141,48 +152,74 @@ class ArticleImageActivity : AppCompatActivity() {
 
     fun showPictureFromByteArray(imageLarge: ByteArray?, imageSmall: ByteArray?)
     {
-        if ((imageLarge == null) || (imageSmall == null))
+        if (imageLarge == null)
         {
-            binding.ArticleImageInfo.text = "Kein Bild"
+            binding.ArticleImageImage.setImageResource(R.drawable.hide_image_24px)
             binding.ArticleImageImage.visibility = View.VISIBLE
-            return
+        }
+
+        if (imageSmall == null)
+        {
+            binding.ArticleImageImageThn.setImageResource(R.drawable.hide_image_24px)
+            binding.ArticleImageImageThn.visibility = View.VISIBLE
         }
 
         try
         {
-            val largeBitmap = BitmapFactory.decodeByteArray(imageLarge, 0, imageLarge.size)
-            this.rotatedBitmap = largeBitmap
-            binding.ArticleImageImage.setImageBitmap(largeBitmap)
+            var message = ""
+            if (imageLarge != null)
+            {
+                val largeBitmap = BitmapFactory.decodeByteArray(imageLarge, 0, imageLarge.size)
+                binding.ArticleImageImage.setImageBitmap(largeBitmap)
 
-            var message = String.format(
-                Locale.getDefault(),
-                "Bild (BxH): %,d x %,d (Größe: %s, Komprimiert: %s)%n",
-                largeBitmap.width,
-                largeBitmap.height,
-                Tools.toFuzzyByteString(largeBitmap.byteCount),
-                Tools.toFuzzyByteString(imageLarge.size))
+                this.rotatedBitmap = largeBitmap
 
-            val smallBitmap = BitmapFactory.decodeByteArray(imageSmall, 0, imageSmall.size)
+                message += String.format(
+                    Locale.getDefault(),
+                    "Bild (BxH): %,d x %,d (Größe: %s, Komprimiert: %s)%n",
+                    largeBitmap.width,
+                    largeBitmap.height,
+                    Tools.toFuzzyByteString(largeBitmap.byteCount),
+                    Tools.toFuzzyByteString(imageLarge.size))
+            }
+            else
+            {
+                message += "Bild (BxH): Nicht definiert!\n"
+            }
 
-            message += String.format(
-                Locale.getDefault(),
-                "Thn. (BxH): %,d x %,d (Größe: %s, Komprimiert: %s)%n",
-                smallBitmap.width,
-                smallBitmap.height,
-                Tools.toFuzzyByteString(smallBitmap.byteCount),
-                Tools.toFuzzyByteString(imageSmall.size))
+            if (imageSmall != null)
+            {
+                val smallBitmap = BitmapFactory.decodeByteArray(imageSmall, 0, imageSmall.size)
+                binding.ArticleImageImageThn.setImageBitmap(smallBitmap)
 
+                message += String.format(
+                    Locale.getDefault(),
+                    "Thn. (BxH): %,d x %,d (Größe: %s, Komprimiert: %s)%n",
+                    smallBitmap.width,
+                    smallBitmap.height,
+                    Tools.toFuzzyByteString(smallBitmap.byteCount),
+                    Tools.toFuzzyByteString(imageSmall.size))
+            }
+            else
+            {
+                message += "Thn. (BxH): Nicht definiert!\n"
+            }
             binding.ArticleImageInfo.text = message
         }
         catch (e: Exception)
         {
             binding.ArticleImageInfo.text = e.message
-            binding.ArticleImageImage.visibility = View.GONE
+            binding.ArticleImageInfo.visibility = View.VISIBLE
         }
     }
 
     private fun rotateImage()
     {
+        if (rotatedBitmap == null)
+        {
+            return
+        }
+
         val matrix = Matrix()
         matrix.postRotate(90f)
 
@@ -204,11 +241,13 @@ class ArticleImageActivity : AppCompatActivity() {
     {
         if (binding.ArticleImageInfo.visibility != View.VISIBLE)
         {
-            binding.ArticleImageInfo.visibility = View.VISIBLE
+            binding.ArticleImageInfo.visibility     = View.VISIBLE
+            binding.ArticleImageImageThn.visibility = View.VISIBLE
         }
         else
         {
-            binding.ArticleImageInfo.visibility = View.GONE
+            binding.ArticleImageInfo.visibility     = View.GONE
+            binding.ArticleImageImageThn.visibility = View.GONE
         }
     }
 }

@@ -30,13 +30,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:visibility="gone" />
+    <ImageView
+        android:id="@+id/ArticleImage_ImageThn"
+        android:contentDescription="@string/Picture"
         android:visibility="gone"
-        android:textColor="@color/Text_Color" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:id="@+id/ArticleImage_Image"
         android:contentDescription="@string/Picture"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
-
 
 </LinearLayout>

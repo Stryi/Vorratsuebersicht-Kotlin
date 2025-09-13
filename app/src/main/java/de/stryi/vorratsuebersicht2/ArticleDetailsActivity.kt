@@ -16,6 +16,7 @@ import de.stryi.vorratsuebersicht2.database.Article
 import de.stryi.vorratsuebersicht2.database.ArticleImage
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleDetailsBinding
+import de.stryi.vorratsuebersicht2.tools.imageResizer
 import java.io.ByteArrayOutputStream
 import java.math.BigDecimal
 import java.util.Date
@@ -55,12 +56,10 @@ class ArticleDetailsActivity : AppCompatActivity() {
     }
 
     // Launcher global als Property
-    private val articleImageLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-
-            //val bitmap: Bitmap? = BitmapFactory.decodeByteArray(ArticleDetailsActivity.imageLarge, 0, ArticleDetailsActivity.imageLarge!!.size)
+    private val articleImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+    { result ->
+        if (result.resultCode == RESULT_OK)
+        {
             val largeBitmap = BitmapFactory.decodeByteArray(ArticleDetailsActivity.imageLarge, 0, ArticleDetailsActivity.imageLarge!!.size)
 
             binding.ArticleDetailsImage.setImageBitmap(largeBitmap)
@@ -239,6 +238,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
                     val articleImage = Intent(this, ArticleImageActivity::class.java)
                     articleImage.putExtra("ArticleId", this.articleId)
                     articleImage.putExtra("EditMode", true)
+                    articleImage.putExtra("Title",  binding.ArticleDetailsName.text.toString())
                     this.startActivity(articleImage)
                 }
                 return true
@@ -339,6 +339,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
         val articleImage = Intent(this, ArticleImageActivity::class.java)
         articleImage.putExtra("ArticleId", this.articleId)
         articleImage.putExtra("EditMode", true)
+        articleImage.putExtra("Title",  binding.ArticleDetailsName.text.toString())
         articleImageLauncher.launch(articleImage)
         //this.startActivity(articleImage)
     }
@@ -471,6 +472,7 @@ class ArticleDetailsActivity : AppCompatActivity() {
         var heightLarge = 854
 
         var largeBitmap = newBitmap
+        var resizedImage: ByteArray
 
         val compress = true // TODO: Settings.GetBoolean("CompressPictures", true);
         if (compress)
@@ -497,7 +499,8 @@ class ArticleDetailsActivity : AppCompatActivity() {
             widthLarge = Math.min (newBitmap.width,  widthLarge)
             heightLarge = Math.min(newBitmap.height, heightLarge)
 
-            largeBitmap = Bitmap.createScaledBitmap(newBitmap, widthLarge, heightLarge, true)
+            resizedImage= imageResizer.resizeImageAndroid(newBitmap, widthLarge.toFloat(), heightLarge.toFloat())
+            largeBitmap = BitmapFactory.decodeByteArray(resizedImage, 0, resizedImage.size)
         }
 
         val stream = ByteArrayOutputStream()
@@ -508,7 +511,8 @@ class ArticleDetailsActivity : AppCompatActivity() {
         // Miniaturansicht erstellen
         // --------------------------------------------------------------------------------
 
-        var smallBitmap = Bitmap.createScaledBitmap(newBitmap, 48*2, 85*2, true)
+        resizedImage= imageResizer.resizeImageAndroid(newBitmap, (48*2).toFloat(), (85*2).toFloat())
+        var smallBitmap = BitmapFactory.decodeByteArray(resizedImage, 0, resizedImage.size)
 
         smallBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         ArticleDetailsActivity.imageSmall = stream.toByteArray()
