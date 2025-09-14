@@ -27,20 +27,23 @@
         android:visibility="gone"/>
     <TextView
         android:id="@+id/ArticleImage_Info"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:padding="5dp"
         android:visibility="gone" />
     <ImageView
         android:id="@+id/ArticleImage_ImageThn"
         android:contentDescription="@string/Picture"
         android:visibility="gone"
+        android:padding="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/ArticleImage_Image"
         android:contentDescription="@string/Picture"
+        android:padding="5dp"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
