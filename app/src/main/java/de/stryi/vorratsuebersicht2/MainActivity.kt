@@ -3,7 +3,6 @@ package de.stryi.vorratsuebersicht2
 import de.stryi.vorratsuebersicht2.database.Database
 import android.Manifest
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -37,8 +36,15 @@ import de.stryi.vorratsuebersicht2.databinding.ActivityMainBinding
 
         Database.init(this, AndroidDatabase.SQLITE_FILENAME_PROD)
 
-        val buttonCategory = findViewById<Button>(R.id.MainButton_Kategorie)
-        buttonCategory.setOnClickListener {
+        val buttonKategorie = findViewById<Button>(R.id.MainButton_Kategorie)
+        buttonKategorie.setOnClickListener {
+
+        }
+
+        val buttonLagerbestand = findViewById<Button>(R.id.MainButton_Lagerbestand)
+        buttonLagerbestand.setOnClickListener {
+            val intent = Intent(this, StorageItemListActivity::class.java)
+            startActivity(intent)
         }
 
         val buttonArticle = findViewById<Button>(R.id.MainButton_Artikeldaten)

@@ -17,6 +17,11 @@
         android:theme="@style/Theme.VorratsuebersichtNeu"
         tools:targetApi="35">
         <activity
+            android:name=".StorageItemListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_storage_item_list"
+            android:theme="@style/Theme.VorratsuebersichtNeu.NoActionBar" />
+        <activity
             android:name=".ArticleImageActivity"
             android:exported="false" />
         <activity

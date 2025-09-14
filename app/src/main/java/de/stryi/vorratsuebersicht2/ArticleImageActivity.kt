@@ -31,7 +31,7 @@ class ArticleImageActivity : AppCompatActivity() {
     var editMode: Boolean = false
     var isChanged: Boolean = false
 
-    lateinit var rotatedBitmap: Bitmap
+    var rotatedBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,15 +126,17 @@ class ArticleImageActivity : AppCompatActivity() {
 
     private fun saveBitmap()
     {
+        if (rotatedBitmap == null)
+            return
+
         // Großes Bild als PNG-Bytearray speichern
-        ArticleDetailsActivity.imageLarge = rotatedBitmap.toPngByteArray()
+        ArticleDetailsActivity.imageLarge = rotatedBitmap!!.toPngByteArray()
 
         // Verkleinertes Bild (Thumbnail) erstellen
         val smallBitmap = imageResizer.resizeImageAndroid(
-            rotatedBitmap,
+            rotatedBitmap!!,
             (48 * 2).toFloat(),
             (85 * 2).toFloat())
-        //val smallBitmap = rotatedBitmap.resize(48 * 2, 85 * 2)
 
         // Thumbnail als PNG-Bytearray speichern
         ArticleDetailsActivity.imageSmall = smallBitmap
@@ -142,7 +144,7 @@ class ArticleImageActivity : AppCompatActivity() {
         val intent = Intent()
         this.setResult(RESULT_OK, intent)
 
-        //this.rotatedBitmap = null
+        this.rotatedBitmap = null
         this.isChanged = false
     }
 
@@ -232,10 +234,10 @@ class ArticleImageActivity : AppCompatActivity() {
         matrix.postRotate(90f)
 
         val rotated = Bitmap.createBitmap(
-            rotatedBitmap,
+            rotatedBitmap!!,
             0, 0,
-            rotatedBitmap.width,
-            rotatedBitmap.height,
+            rotatedBitmap!!.width,
+            rotatedBitmap!!.height,
             matrix,
             true
         )

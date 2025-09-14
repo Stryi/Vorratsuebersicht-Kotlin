@@ -25,4 +25,13 @@
     <style name="Theme.Vorratsuebersicht.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Vorratsuebersicht.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.VorratsuebersichtNeu.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.VorratsuebersichtNeu.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.VorratsuebersichtNeu.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
