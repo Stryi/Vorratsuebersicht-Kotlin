@@ -10,10 +10,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import de.stryi.vorratsuebersicht2.database.Database
 import de.stryi.vorratsuebersicht2.databinding.ArticleImageBinding
 import de.stryi.vorratsuebersicht2.tools.Tools
 import de.stryi.vorratsuebersicht2.tools.imageResizer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import resize
 import toPngByteArray
 import java.util.Locale
@@ -108,9 +112,16 @@ class ArticleImageActivity : AppCompatActivity() {
             return
         }
 
-        this.saveBitmap()
+        this.showProgressBar()
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                saveBitmap()
+                System.gc()
+            }
 
-        super.finish()
+            finish()
+            hideProgressBar()
+        }
     }
 
     private fun saveBitmap()
@@ -246,5 +257,15 @@ class ArticleImageActivity : AppCompatActivity() {
             binding.ArticleImageInfo.visibility     = View.GONE
             binding.ArticleImageImageThn.visibility = View.GONE
         }
+    }
+
+    private fun showProgressBar()
+    {
+        binding.ArticleImageProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar()
+    {
+        binding.ArticleImageProgressBar.visibility = View.GONE
     }
 }
