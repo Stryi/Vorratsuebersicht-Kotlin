@@ -204,7 +204,7 @@ class ArticleImageActivity : AppCompatActivity() {
 
                 message += String.format(
                     Locale.getDefault(),
-                    "Thn. (BxH): %,d x %,d (Größe: %s, Komprimiert: %s)%n",
+                    "Thn. (BxH): %,d x %,d (Größe: %s, Komprimiert: %s)",
                     smallBitmap.width,
                     smallBitmap.height,
                     Tools.toFuzzyByteString(smallBitmap.byteCount),
@@ -212,7 +212,7 @@ class ArticleImageActivity : AppCompatActivity() {
             }
             else
             {
-                message += "Thn. (BxH): Nicht definiert!\n"
+                message += "Thn. (BxH): Nicht definiert!"
             }
             binding.ArticleImageInfo.text = message
         }
