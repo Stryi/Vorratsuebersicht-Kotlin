@@ -69,13 +69,6 @@ class ArticleImageActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu?,
-        v: View?,
-        menuInfo: ContextMenu.ContextMenuInfo?)
-    {
-        super.onCreateContextMenu(menu, v, menuInfo)
-    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean
     {
         menuInflater.inflate(R.menu.article_image_menu, menu)

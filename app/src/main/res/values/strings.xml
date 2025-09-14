@@ -224,6 +224,7 @@
     <string name="InternetDatabaseSearch_CaloriesPerUnit">Nährwert: {0} kcal pro 100g</string>
 
     <!-- Lagerbestandsliste -->
+    <string name="StorageItem_Title">Lagerbestand</string>
     <string name="StorageItem_Storage">Lager:</string>
     <string name="StorageItem_AllStoragesStorage">[Alle Lager]</string>
     <string name="StorageItem_NoStoragesStorage">[Ohne Lager]</string>
